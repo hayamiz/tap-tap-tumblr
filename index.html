@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>TTT</title>
+
+    <style type="text/css" media="screen">@import "./jqtouch/jqtouch.min.css";</style>
+    <style type="text/css" media="screen">@import "./jqtouch/themes/jqt/theme.min.css";</style>
+    <style type="text/css" media="screen">@import "./ttt.css";</style>
+    <script src="./jqtouch/jquery.1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./jqtouch/jqtouch.js" type="application/x-javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      $.jQTouch({icon: "./img/icon.png"});
+    </script>
+    <style type="text/css" media="screen">
+      body.fullscreen #home .info {
+      display: none;
+      }
+      #about {
+      padding: 100px 10px 40px;
+      text-shadow: rgba(255, 255, 255, 0.3) 0px -1px 0;
+      font-size: 13px;
+      text-align: center;
+      background: #161618;
+      }
+      #about p {
+      margin-bottom: 8px;
+      }
+      #about a {
+      color: #fff;
+      font-weight: bold;
+      text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="home">
+      <div class="thinToolbar">
+	<h1>TapTapTumblr(<span id="currentPostIdx">0</span>/<span id="totalPostNum">0</span>)</h1>
+      </div>
+      <div>
+	<ul class="compactindividual">
+	  <li><a id="kaiokenButton">界王拳</a></li>
+	  <li><a id="nextButton">next</a></li>
+	  <li><a id="prevButton">prev</a></li>
+	  <li><a id="reblogButton">reblog</a></li>
+	</ul>
+      </div>
+      <div id="indicatorArea"></div>
+      <div class="post" id="currentPost"></div>
+      <ul class="form"><li>Skip photo<span class="toggle"><input id="skipPhoto" type="checkbox" /></span></li></ul>
+    </div>
+
+    <div id="about">
+      <p><img src="jqtouch.png" /></p>
+      <p><strong>Powered by jQTouch</strong><br />Version 1.0 beta<br />
+      <a href="http://www.davidkaneda.com">By David Kaneda</a></p>
+      <p><em>Create powerful mobile apps with<br /> just HTML, CSS, and jQuery.</em></p>
+      <p><br /><br /><a href="#" class="grayButton goback">Close</a></p>
+    </div>
+
+    <div id="preloadBuffer">
+    <img src="./img/ajax-loader.gif" />
+    </div>
+
+    <script src="./textumblr.js" type="text/javascript" charset="utf-8"></script>
+  </body>
+</html>
