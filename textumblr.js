@@ -17,6 +17,7 @@ var imgBuffer = [];
 
 var nextIndicatorId = 0;
 var skipPhoto = null;
+var highRes = null;
 
 // function prefetchImages(idx){
 //     for(var idx in imgBuffer){
@@ -37,7 +38,11 @@ var skipPhoto = null;
 var preloadBuffers = []
 function prefetchImages(idx){
     for(var i = 0;i < config.prefetch_img_num && i + idx + 1 < postData.length;i++){
-	preloadBuffers[i].src = postData[i+idx+1].photo_url;
+	if (highRes.checked){
+	    preloadBuffers[i].src = postData[i+idx+1].photo_url_large;
+	} else {
+	    preloadBuffers[i].src = postData[i+idx+1].photo_url;
+	}
     }
 }
 
@@ -103,10 +108,14 @@ function showPost(idx){
 	$('#currentPostIdx')[0].innerHTML = String(idx+1);
 
 	if (postData[idx].type == "photo"){
-	    $('#currentPost > div.photo > img').bind('click', function(){
-		this.src = null;
-		this.src = postData[idx].photo_url_large;
-	    });
+	    if (highRes.checked){
+		$('#currentPost > div.photo > img')[0].src = postData[idx].photo_url_large;
+	    } else {
+		$('#currentPost > div.photo > img').bind('click', function(){
+		    this.src = null;
+		    this.src = postData[idx].photo_url_large;
+		});
+	    }
 	}
 
 	// open new window if clicked
@@ -234,18 +243,56 @@ function kaioken(){
     }
 }
 
+function getUrlVars(){
+    var vars = [], hash;
+    if (window.location.href.indexOf('?') == -1){
+	return {};
+    }
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++){
+        hash = hashes[i].split('=');
+        vars[decodeURI(hash[0])] = decodeURI(hash[1]);
+    }
+    return vars;
+}
+
+function getBaseUrl(){
+    if (window.location.href.indexOf('?') == -1){
+	return window.location.href;
+    }
+    return window.location.href.slice(0, window.location.href.indexOf('?'));
+}
+
+function refreshAction(){
+    var idx = currentPostIdx;
+    if(currentPostIdx > 0){
+	idx--;
+    }
+    offset = postData[idx].id;
+    url = getBaseUrl() + "?offset=" + String(offset);
+    if (highRes.checked) url += "&highres=true"
+    if (skipPhoto.checked) url += "&skipphoto=true"
+    document.location.assign(url);
+    document.location.reload(true);
+}
+
 function setupTTT(){
 //     $('#prevButton').bind('click', prevPost);
 //     $('#nextButton').bind('click', nextPost);
 //     $('#reblogButton').bind('click', reblog);
 //     $('#kaiokenButton').bind('click', kaioken);
 
-    skipPhoto = $('#skipPhoto')[0].checked;
+    skipPhoto = $('#skipPhoto')[0];
+    highRes = $('#highRes')[0];
 
+    highRes.onclick = function(){prefetchImages(currentPostIdx);}
     $('#prevButton')[0].onclick = prevPost;
     $('#nextButton')[0].onclick = nextPost;
+    $('#prevButton')[0].ondblclick = prevPost;
+    $('#nextButton')[0].ondblclick = nextPost;
     $('#reblogButton')[0].onclick = reblog;
     $('#kaiokenButton')[0].onclick = kaioken;
+    $('#refreshButton')[0].onclick = refreshAction;
 
     for(var i = 0;i < config.prefetch_img_num;i++){
 	$('#preloadBuffer').append('<img src=\"#\" />');
@@ -254,7 +301,19 @@ function setupTTT(){
 	preloadBuffers[i] = $('#preloadBuffer img')[i];
     }
 
-    loadPosts();
+    params = getUrlVars();
+    if (params.highres == "true"){
+	highRes.checked = true;
+    }
+    if (params.skipphoto == "true"){
+	skipPhoto.checked = true;
+    }
+
+    if (params["offset"]) {
+	loadPosts({offset: params["offset"]});
+    } else {
+	loadPosts();
+    }
 }
 
 setupTTT();

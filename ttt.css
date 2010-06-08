@@ -13,6 +13,7 @@ div.photo {
 
 div.photo img {
     max-width: 100%;
+    min-width: 60%;
 }
 
 div.post > div.user {
