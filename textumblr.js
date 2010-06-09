@@ -3,14 +3,18 @@
 
 var config = {
     num: 50,
-    prefetch_num: 100,
-    prefetch_img_num: 10
+    prefetch_num: 300,
+    prefetch_img_num: 10,
+    post_min_interval: 5000,
+    reblog_timeout: 120*1000
 }
 
 
 // config end
 
 var postData = [];
+var revIndex = {}; // post-id => index of postData
+
 var currentPostIdx = -1;
 var lastPostId = null;
 var imgBuffer = [];
@@ -18,102 +22,97 @@ var imgBuffer = [];
 var nextIndicatorId = 0;
 var skipPhoto = null;
 var highRes = null;
+var debugMode = null;
 
-// function prefetchImages(idx){
-//     for(var idx in imgBuffer){
-// 	imgBuffer[idx].src = null;
-//     }
-//     imgBuffer = null;
-//     imgBuffer = [];
-// 
-//     for(var i = idx + 1;i < idx + config.prefetch_img_num + 1 && i < postData.length;i++){
-// 	if (postData[i].type == "photo"){
-// 	    var img = new Image();
-// 	    img.src = postData[i].photo_url;
-// 	    imgBuffer.push(img);
-// 	}
-//     }
-// }
-
-var preloadBuffers = []
 function prefetchImages(idx){
-    for(var i = 0;i < config.prefetch_img_num && i + idx + 1 < postData.length;i++){
-	if (highRes.checked){
-	    preloadBuffers[i].src = postData[i+idx+1].photo_url_large;
-	} else {
-	    preloadBuffers[i].src = postData[i+idx+1].photo_url;
+    for(var idx in imgBuffer){
+	imgBuffer[idx].src = null;
+    }
+    imgBuffer = null;
+    imgBuffer = [];
+
+    for(var i = idx + 1;i < idx + config.prefetch_img_num + 1 && i < postData.length;i++){
+	if (postData[i].type == "photo"){
+	    var img = new Image();
+	    if (highRes.checked) {
+		img.src = postData[i].photo_url_large;
+	    } else {
+		img.src = postData[i].photo_url;
+	    }
+	    imgBuffer.push(img);
 	}
     }
 }
 
-var requestQueued = false;
-function loadPosts(options){
-    if (requestQueued) return;
-    requestQueued = true;
-    var query_str = ""
-    if (options){
-	var pairs = []
-	for(var key in options){
-	    pairs.push(encodeURI(String(key)) + "=" + encodeURI(String(options[key])));
-	}
-	if (pairs.length > 0){
-	    query_str = "&" + pairs.join("&")
-	}
+var lastLoadTime = 0;
+var autoLoader = setInterval(function(){
+    prefetchPosts();
+}, config.post_min_interval);
+
+function loadPosts(optparams){
+    if (lastLoadTime + config.post_min_interval > (new Date()).getTime()){
+	return ;
     }
-    $.ajax({
-	url: './ttt.cgi?method=dashboard' + query_str,
-	complete: function(){
-	    requestQueued = false;
-	    prefetchPosts();
-	},
-	success: function(data){
-	    eval(data);
-	    if (result){
-		// success
-		lastPostId = result[result.length - 1]["id"];
-		postData = postData.concat(result);
-		$('#totalPostNum').html(String(postData.length));
-		if (postData.length > 0 && currentPostIdx < 0){
-		    prefetchImages(0);
-		    currentPostIdx = 0;
-		    showPost(0);
-		}
-	    } else {
-		// failure (api rate limit?)
-		setTimeout(loadPosts, 1000);
-	    }
-	},
-	error: function(){
-	    setTimeout(loadPosts, 1000);
-	}
-    });
+    lastLoadTime = (new Date()).getTime();
+
+    var params = {method: "dashboard"};
+    if (lastPostId) params.offset = String(lastPostId);
+    $.extend(params, optparams);
+
+    var ajax_params = { url: './ttt.cgi',
+			data: params,
+			success: function(data){
+			    eval(data);
+			    if (result){
+				// success
+				for(var idx in result){
+				    post = result[idx];
+				    if (!revIndex[post.id]){
+					// new post
+					postData.push(post);
+					revIndex[post.id] = postData.length - 1;
+					lastPostId = post.id;
+				    }
+				}
+				$('#totalPostNum').html(String(postData.length));
+				if (postData.length > 0 && currentPostIdx < 0){
+				    prefetchImages(0);
+				    currentPostIdx = 0;
+				    showPost(0);
+				}
+			    } else {
+				// failure (api rate limit?)
+				setTimeout(loadPosts, 1000);
+			    }
+			}};
+    var request_opts = {};
+    req = new Request(ajax_params, request_opts);
 }
 
 function prefetchPosts(force){
     if (force || (postData.length - currentPostIdx - 1 < config.prefetch_num)){
-	var opt = {}
-	if (lastPostId) opt = {offset: String(lastPostId)};
-	loadPosts(opt);
+	loadPosts();
     }
 }
 
 function showPost(idx){
     if (idx >= 0 && idx < postData.length){
 	var imgs = $('#currentPost img');
+	var post = postData[idx];
 	for(var i = 0;i < imgs.length;i++){
 	    imgs[i].src = null;
 	}
 
-	$('#currentPost')[0].innerHTML = postData[idx].content;
+	$('#currentPost')[0].innerHTML = post.content;
 	$('#currentPostIdx')[0].innerHTML = String(idx+1);
 
-	if (postData[idx].type == "photo"){
+	if (post.type == "photo"){
 	    if (highRes.checked){
-		$('#currentPost > div.photo > img')[0].src = postData[idx].photo_url_large;
+		$('#currentPost > div.photo > img')[0].src = post.photo_url_large;
 	    } else {
 		$('#currentPost > div.photo > img').bind('click', function(){
 		    this.src = null;
-		    this.src = postData[idx].photo_url_large;
+		    this.src = post.photo_url_large;
 		});
 	    }
 	}
@@ -123,6 +122,10 @@ function showPost(idx){
 	    window.open(this.href);
 	    return false;
 	});
+
+	// update permalink
+	var url = getPermalink();
+	$('#permalink').html('permalink: <a href="'+url+'">'+url+'</a>');
     }
 }
 
@@ -193,36 +196,45 @@ function hideIndicator(id, delay, fade){
     }
 }
 
-function doReblog(id, reblog_key){
+function doReblog(id, reblog_key, retry_num){
     var indicatorId = nextIndicatorId++;
     showIndicator(indicatorId, '<img src="./img/ajax-loader.gif" /> reblog');
 
     reblog_url = './ttt.cgi?method=reblog&id='+String(id)+'&reblog_key='+reblog_key
     
-    var retry_num = 50;
-    var error_handler = function(){
-	showIndicator(indicatorId, "reblog failed. will retry", 1000);
-	if (retry_num > 0){
-	    setTimeout(function(){ doReblog(id, reblog_key); }, 10000);
-	}
-	retry_num--;
+    if (!retry_num){
+	retry_num = 50;
     }
-    $.ajax({
-	url: reblog_url,
-	success: function(data){
-	    eval(data);
-	    if (result){
-		showIndicator(indicatorId, "reblog done", 1000);
-		// showIndicator(indicatorId, "reblog done");
-		// hideIndicator(indicatorId);
-	    }
-	    else
-		error_handler();
-	},
-	error: function(){
-	    error_handler();
+    var error_handler = function(){
+	showIndicator(indicatorId, "reblog failed. will retry " + retry_num + " times" , 9000, 1000);
+	if (retry_num > 0){
+	    setTimeout(function(){ doReblog(id, reblog_key, retry_num - 1); }, 10000);
 	}
-    });
+    }
+    var ajax_params = { url: reblog_url,
+			timeout: config.reblog_timeout,
+			success: function(data){
+			    eval(data);
+			    if (result){
+				showIndicator(indicatorId, "reblog done", 1000);
+				// showIndicator(indicatorId, "reblog done");
+				// hideIndicator(indicatorId);
+			    } else {
+				error_handler();
+			    }
+			},
+			error: function(xhr, textStatus, err){
+			    // dprint("reblog: ajax error handler called");
+			    error_handler();
+			}
+		      };
+    var request_opts = { timeout: config.reblog_timeout * 2,
+			 error: function(){
+			     // dprint("reblog: request error handler called");
+			     error_handler();
+			 }
+		       };
+    new Request(ajax_params, request_opts);
 }
 
 function reblog(){
@@ -238,7 +250,10 @@ function reblog(){
 }
 
 function kaioken(){
-    for(var i = 0;i < 10; i++){
+    var level = parseInt($('#kaiokenLevel')[0].value);
+    if (level < 10) level = 10;
+
+    for(var i = 0;i < level; i++){
 	reblog();
     }
 }
@@ -263,7 +278,7 @@ function getBaseUrl(){
     return window.location.href.slice(0, window.location.href.indexOf('?'));
 }
 
-function refreshAction(){
+function getPermalink(){
     var idx = currentPostIdx;
     if(currentPostIdx > 0){
 	idx--;
@@ -272,7 +287,11 @@ function refreshAction(){
     url = getBaseUrl() + "?offset=" + String(offset);
     if (highRes.checked) url += "&highres=true"
     if (skipPhoto.checked) url += "&skipphoto=true"
-    document.location.assign(url);
+    return url;
+}
+
+function refreshAction(){
+    document.location.assign(getPermalink());
     document.location.reload(true);
 }
 
@@ -293,13 +312,6 @@ function setupTTT(){
     $('#reblogButton')[0].onclick = reblog;
     $('#kaiokenButton')[0].onclick = kaioken;
     $('#refreshButton')[0].onclick = refreshAction;
-
-    for(var i = 0;i < config.prefetch_img_num;i++){
-	$('#preloadBuffer').append('<img src=\"#\" />');
-    }
-    for(var i = 0;i < config.prefetch_img_num;i++){
-	preloadBuffers[i] = $('#preloadBuffer img')[i];
-    }
 
     params = getUrlVars();
     if (params.highres == "true"){

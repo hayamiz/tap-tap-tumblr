@@ -10,6 +10,14 @@
     <style type="text/css" media="screen">@import "./ttt.css";</style>
     <script src="./jqtouch/jquery.1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="./jqtouch/jqtouch.js" type="application/x-javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+      function dprint(obj){
+        if($('#debugMode')[0].checked){
+          $("#debug-console").append('<pre>'+String(obj)+'</pre>');
+        }
+      }
+    </script>
+    <script src="./request.js" type="application/x-javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
       $.jQTouch({icon: "./img/icon.png"});
     </script>
@@ -39,6 +47,10 @@
       <div class="thinToolbar">
 	<h1>TapTapTumblr(<span id="currentPostIdx">0</span>/<span id="totalPostNum">0</span>)</h1>
       </div>
+      <div id="debug-area">
+	<div id="debug-console">
+	</div>
+      </div>
       <div>
 	<ul class="compactindividual">
 	  <li><a id="kaiokenButton">界王拳</a></li>
@@ -53,17 +65,21 @@
 	<ul class="rounded">
 	  <li>Skip photo<span class="toggle"><input id="skipPhoto" type="checkbox" /></span></li>
 	  <li>High resolution<span class="toggle"><input id="highRes" type="checkbox" /></span></li>
+	  <li>
+	    <select id="kaiokenLevel">
+	      <option value="10" selected="selected">10倍界王拳</option>
+	      <option value="20">20倍界王拳</option>
+	      <option value="50">50倍界王拳</option>
+	      <option value="100">100倍界王拳</option>
+	    </select>
+	  </li>
 	  <li><a id="refreshButton">Refresh after this post</a></li>
+	  <li>Debug mode<span class="toggle"><input id="debugMode" type="checkbox" checked="true" /></span></li>
 	</ul>
       </div>
-    </div>
-
-    <div id="about">
-      <p><img src="jqtouch.png" /></p>
-      <p><strong>Powered by jQTouch</strong><br />Version 1.0 beta<br />
-      <a href="http://www.davidkaneda.com">By David Kaneda</a></p>
-      <p><em>Create powerful mobile apps with<br /> just HTML, CSS, and jQuery.</em></p>
-      <p><br /><br /><a href="#" class="grayButton goback">Close</a></p>
+      <div class="post" id="permalink">
+	
+      </div>
     </div>
 
     <div id="preloadBuffer">
