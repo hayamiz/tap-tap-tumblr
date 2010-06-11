@@ -8,6 +8,39 @@ div.post {
     max-width: 400px;
 }
 
+div.post a {
+    color: steelblue;
+    text-decoration: none;
+}
+div.post a:hover {
+    text-decoration: underline;
+}
+
+
+div.post ul {
+    background: none;
+    color: black;
+    font: inherit;
+    border: none;
+    margin: 5px 10px;
+}
+div.post ul li {
+    color: inherit;
+    font: inherit;
+    background: none;
+    border: none;
+    list-style-type: disc;
+    padding: 3px 5px;
+    margin-left: 18px;
+    marker-offset: 5px;
+    overflow: visible;
+}
+div.post ul li a {
+    font: inherit;
+    display: inline;
+}
+
+
 div.photo {
     text-align: center;
     display: none;
@@ -105,16 +138,42 @@ ul.compactindividual li a {
 /* @end */
 
 div#indicatorArea {
+    background: none;
+    color: black;
+    font: inherit;
+    border: none;
     margin: 5px;
+    position: absolute;
+    max-width: 50%;
+    min-width: 1px;
+    z-index: 100;
+}
+div#indicatorArea ul{
+    list-style-type: disc;
+    margin: 0;
+    pardding: 0;
+    border: none;
+}
+div#indicatorArea ul li{
+    color: inherit;
+    font: inherit;
+    background: none;
+    border: none;
+    list-style-type: none;
+    margin: 2px;
+    padding: 0;
+    display: list-item;
+    overflow: hidden;
 }
 
 span.indicator {
     -webkit-border-radius: 3px;
     padding: 3px;
-    margin: 3px;
+    margin: 0;
     background: white;
     color: gray;
     font-size: 12px;
+    font-weight: normal;
     opacity: 0.8;
 }
 
