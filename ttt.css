@@ -5,10 +5,12 @@ div.post {
     -webkit-border-radius: 8px;
     padding: 8px;
     color: black;
+    max-width: 400px;
 }
 
 div.photo {
     text-align: center;
+    display: none;
 }
 
 div.photo img {

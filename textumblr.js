@@ -24,6 +24,11 @@ var skipPhoto = null;
 var highRes = null;
 var debugMode = null;
 
+var postUser = null;
+var postPhoto = null;
+var postPhotoImg = null;
+var postContent = null;
+
 function prefetchImages(idx){
     for(var idx in imgBuffer){
 	imgBuffer[idx].src = null;
@@ -95,27 +100,30 @@ function prefetchPosts(force){
     }
 }
 
-function showPost(idx){
+function showPost(idx, highres){
     if (idx >= 0 && idx < postData.length){
-	var imgs = $('#currentPost img');
 	var post = postData[idx];
-	for(var i = 0;i < imgs.length;i++){
-	    imgs[i].src = null;
-	}
 
-	$('#currentPost')[0].innerHTML = post.content;
-	$('#currentPostIdx')[0].innerHTML = String(idx+1);
-
+	postUser.innerHTML = post.user;
 	if (post.type == "photo"){
-	    if (highRes.checked){
-		$('#currentPost > div.photo > img')[0].src = post.photo_url_large;
-	    } else {
-		$('#currentPost > div.photo > img').bind('click', function(){
-		    this.src = null;
-		    this.src = post.photo_url_large;
-		});
+	    postPhotoImg.src = "./img/large-loading.gif";
+	    
+	    var img_src = post.photo_url;
+	    var img_width = "60%";
+	    if (highres || highRes.checked){
+		img_src = post.photo_url_large;
+		img_width = "100%";
 	    }
+
+	    postPhotoImg.src = img_src;
+	    postPhotoImg.style.width = img_width;
+	    postPhoto.style.display = "block";
+	} else {
+	    postPhoto.style.display = "none";
 	}
+	postContent.innerHTML = post.content;
+
+	$('#currentPostIdx')[0].innerHTML = String(idx+1);
 
 	// open new window if clicked
 	$('#currentPost a').bind('click', function(){
@@ -303,15 +311,51 @@ function setupTTT(){
 
     skipPhoto = $('#skipPhoto')[0];
     highRes = $('#highRes')[0];
+    postUser = $('#currentPost > div.user')[0];
+    postPhoto = $('#currentPost > div.photo')[0];
+    postPhotoImg = $('#currentPost > div.photo > img')[0];
+    postContent = $('#currentPost > div.content')[0];
+
+    $('#currentPost > div.photo > img').bind('click', function(){
+	showPost(currentPostIdx, true);
+    });
 
     highRes.onclick = function(){prefetchImages(currentPostIdx);}
-    $('#prevButton')[0].onclick = prevPost;
-    $('#nextButton')[0].onclick = nextPost;
-    $('#prevButton')[0].ondblclick = prevPost;
-    $('#nextButton')[0].ondblclick = nextPost;
-    $('#reblogButton')[0].onclick = reblog;
-    $('#kaiokenButton')[0].onclick = kaioken;
-    $('#refreshButton')[0].onclick = refreshAction;
+    $('#prevButton').tap(prevPost);
+    $('#nextButton').tap(nextPost);
+    $('#reblogButton').tap(reblog);
+    $('#kaiokenButton').tap(kaioken);
+    $('#refreshButton').tap(refreshAction);
+
+    $(document).keypress(function(evt){
+	switch(evt.keyCode){
+	case 32: // space
+	    document.body.scrollTop += 50;
+return false;
+	    break;
+	case 104: // h
+	    highRes.checked = ! highRes.checked;
+	    break;
+	case 106: // j
+	    document.body.scrollTop = 0;
+	    nextPost();
+	    break;
+	case 107: // k
+	    document.body.scrollTop = 0;
+	    prevPost();
+	    break;
+	case 114: // r
+	    refreshAction();
+	    refreshAction();
+	    break;
+	case 115: // s
+	    skipPhoto.checked = ! skipPhoto.checked;
+	    break;
+	case 116: // t
+	    reblog();
+	    break;
+	}
+    });
 
     params = getUrlVars();
     if (params.highres == "true"){

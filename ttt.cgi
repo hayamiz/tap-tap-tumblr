@@ -84,7 +84,7 @@ class Tumblr
       end
 
       user = post.search("div.meta > div > a")[0].to_s
-      ret[:content] = "<div class=\"user\">#{user}</div>"
+      ret[:user] = user
 
       post = post.search(".post")[0]
       case post[:class].split[1]
@@ -104,13 +104,12 @@ class Tumblr
         else
           caption = post.search(".caption")[0].innerHTML
         end
-        ret[:content] += "<div class=\"photo\"><img src=\"#{ret[:photo_url]}\" /></div>" + 
-          "<div class=\"photo-caption\">#{caption}</div>"
+        ret[:content] = "<div class=\"photo-caption\">#{caption}</div>"
       when /\Aquote_post\Z/
         ret[:type] = "quote"
         text = post.search("div.quote").innerHTML
         source = post.search(".source").innerHTML
-        ret[:content] += <<EOS
+        ret[:content] = <<EOS
 <div class="quote-text">#{text}</div>
 <div class="quote-source">#{source}</div>
 EOS
