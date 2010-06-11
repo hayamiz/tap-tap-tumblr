@@ -349,25 +349,31 @@ function setupTTT(){
     var showKeyStroke = function(msg){
 	var thisStrokeId = "stroke"+(strokeId++);
 	if (strokeMode.checked){
-	    $("#home").append('<div class="stroke" id="'+thisStrokeId+'">'+msg+'</div>');
+	    $("#home").append('<div class="stroke" id="'+thisStrokeId+'"><span>'+msg+'</span></div>');
 	    var elemOjb = $('#'+thisStrokeId);
 	    var elem = elemOjb[0];
-	    elem.style.top = "50px";
 	    var maxSize = window.innerHeight / 1.5;
 	    if (maxSize * 5 > window.innerWidth){
 		maxSize = window.innerWidth / 5;
 	    }
-	    var stepRatio = 1.2;
+	    var step = 10;
 	    var fontSize = maxSize;
+	    var top = window.innerHeight / 2 + document.body.scrollTop;
 	    elem.style.lineHeight = maxSize + "px";
-	    var timer = setInterval(function(){
-		elem.style.fontSize = fontSize + "px";
-		fontSize /= stepRatio;
-	    }, 50);
-	    elemOjb.fadeOut(500, function(){
-		clearInterval(timer);
-		elemOjb.remove();
-	    });
+	    elem.style.fontSize = fontSize + "px";
+	    elem.style.top = top + "px";
+	    setTimeout(function(){
+		var timer = setInterval(function(){
+		    elem.style.fontSize = fontSize + "px";
+		    elem.style.top = top + "px";
+		    fontSize -= step;
+		    top += step * 2;
+		}, 50);
+		elemOjb.fadeOut(800, function(){
+		    clearInterval(timer);
+		    elemOjb.remove();
+		});
+	    }, 30);
 	}
     };
     $(document).keypress(function(evt){

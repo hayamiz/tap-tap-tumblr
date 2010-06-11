@@ -180,11 +180,18 @@ div#indicatorArea ul li img{
 }
 
 div.stroke {
+    font-size: 1px;
     background: transparent;
     position: absolute;
     width: 100%;
     text-align: center;
     line-height: 480px;
-    color: white;
-    text-shadow: 0px 0px 10px black;
+    color: gray;
+}
+
+div.stroke span {
+    background: white;
+    -webkit-border-radius: 10px;
+    color: gray;
+    padding: 20px;
 }
