@@ -186,8 +186,8 @@ function showIndicator(id, text, delay, fade){
     var xIndicator = $('#'+xIndicatorId);
 
     if (xIndicator.length == 0){
-	$('#indicatorArea > ul').append('<li><span class="indicator" id="'+xIndicatorId+
-					'">'+text+'</span></li>');
+	$('#indicatorArea > ul').append('<li class="indicator" id="'+ xIndicatorId +
+					'">'+text+'</li>');
     } else {
 	xIndicator = $('#'+xIndicatorId);
 	xIndicator.html(text);
@@ -382,7 +382,6 @@ function setupTTT(){
 	skipPhoto.checked = true;
     }
     if (params.width){
-	dprint(params.width);
 	$('#currentPost')[0].style.maxWidth = this.value;
 	$('#widthControl')[0].value = params.widthControl;
     }
