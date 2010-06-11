@@ -61,10 +61,12 @@
 	</ul>
       </div>
       <div id="indicatorArea"><ul></ul></div>
-      <div class="post" id="currentPost">
-	<div class="user"></div>
-	<div class="photo"><img src="" /></div>
-	<div class="content"></div>
+      <div class="postWrapper">
+	<div class="post" id="currentPost">
+	  <div class="user"></div>
+	  <div class="photo"><img src="" /></div>
+	  <div class="content"></div>
+	</div>
       </div>
       <div>
 	<ul class="rounded">
@@ -88,6 +90,7 @@
 	  </li>
 	  <li><a id="refreshButton">Refresh after this post</a></li>
 	  <li>Debug mode<span class="toggle"><input id="debugMode" type="checkbox" checked="true" /></span></li>
+	  <li>Show keystroke<span class="toggle"><input id="strokeMode" type="checkbox" /></span></li>
 	</ul>
       </div>
       <div class="post" id="permalink">
