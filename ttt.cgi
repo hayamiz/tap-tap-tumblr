@@ -26,7 +26,7 @@ class Tumblr
       cookie_data = nil
       if File.exists?(cookie_data_path)
         cookie_data = Marshal.load(File.open(cookie_data_path))
-        if cookie_data.is_a?(Hash) && cookie_data[:expires] && cookie_data[:expires] > Time.now
+        unless cookie_data.is_a?(Hash) || (cookie_data[:expires] && cookie_data[:expires] < Time.now)
           cookie_data = nil
         end
       end
