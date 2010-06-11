@@ -28,6 +28,7 @@ var postUser = null;
 var postPhoto = null;
 var postPhotoImg = null;
 var postContent = null;
+var strokeMode = null;
 
 function prefetchImages(idx){
     for(var idx in imgBuffer){
@@ -170,8 +171,7 @@ function nextPost(){
 function reposIndicators(){
     var iarea = $('#indicatorArea');
     var iareaElem = iarea[0];
-    iareaElem.style.left = "0"; // move to the left side to estimate width;
-    var l = (document.body.offsetWidth - iareaElem.offsetWidth - 10) + "px";
+    var l = "10px";
     var t = (document.body.scrollTop +
 	     window.innerHeight -
 	     iareaElem.offsetHeight -
@@ -332,6 +332,7 @@ function setupTTT(){
     postPhoto = $('#currentPost > div.photo')[0];
     postPhotoImg = $('#currentPost > div.photo > img')[0];
     postContent = $('#currentPost > div.content')[0];
+    strokeMode = $('#strokeMode')[0];
 
     $('#currentPost > div.photo > img').bind('click', function(){
 	showPost(currentPostIdx, true);
@@ -344,31 +345,62 @@ function setupTTT(){
     $('#kaiokenButton').tap(kaioken);
     $('#refreshButton').tap(refreshAction);
 
+    var strokeId = 0;
+    var showKeyStroke = function(msg){
+	var thisStrokeId = "stroke"+(strokeId++);
+	if (strokeMode.checked){
+	    $("#home").append('<div class="stroke" id="'+thisStrokeId+'">'+msg+'</div>');
+	    var elemOjb = $('#'+thisStrokeId);
+	    var elem = elemOjb[0];
+	    elem.style.top = "50px";
+	    var maxSize = window.innerHeight / 1.5;
+	    if (maxSize * 5 > window.innerWidth){
+		maxSize = window.innerWidth / 5;
+	    }
+	    var stepRatio = 1.2;
+	    var fontSize = maxSize;
+	    elem.style.lineHeight = maxSize + "px";
+	    var timer = setInterval(function(){
+		elem.style.fontSize = fontSize + "px";
+		fontSize /= stepRatio;
+	    }, 50);
+	    elemOjb.fadeOut(500, function(){
+		clearInterval(timer);
+		elemOjb.remove();
+	    });
+	}
+    };
     $(document).keypress(function(evt){
 	switch(evt.keyCode){
 	case 32: // space
 	    document.body.scrollTop += 100;
 	    return false;
 	    break;
+	case 82: // r
+	    showKeyStroke("R");
+	    refreshAction();
+	    refreshAction();
+	    break;
 	case 104: // h
+	    showKeyStroke("h: toggle");
 	    highRes.checked = ! highRes.checked;
 	    break;
 	case 106: // j
+	    showKeyStroke("j: next");
 	    document.body.scrollTop = 0;
 	    nextPost();
 	    break;
 	case 107: // k
+	    showKeyStroke("k: prev");
 	    document.body.scrollTop = 0;
 	    prevPost();
 	    break;
-	case 114: // r
-	    refreshAction();
-	    refreshAction();
-	    break;
 	case 115: // s
+	    showKeyStroke("s: toggle");
 	    skipPhoto.checked = ! skipPhoto.checked;
 	    break;
 	case 116: // t
+	    showKeyStroke("t: reblog");
 	    reblog();
 	    break;
 	}
