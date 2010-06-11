@@ -4,8 +4,8 @@
 var config = {
     num: 50,
     prefetch_num: 300,
-    prefetch_img_num: 10,
-    post_min_interval: 5000,
+    prefetch_img_num: 50,
+    post_min_interval: 3000,
     reblog_timeout: 120*1000
 }
 
@@ -430,6 +430,10 @@ function setupTTT(){
     $('#widthControl').change(function(){
 	$('#currentPost')[0].style.maxWidth = this.value;
     });
+
+    if (navigator.userAgent.match("Chrome")){
+	highRes.checked = "true";
+    }
 }
 
 setupTTT();
