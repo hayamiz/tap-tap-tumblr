@@ -1,6 +1,10 @@
 
+div.postWrapper {
+    margin: 5px;
+}
+
 div.post {
-    margin: 5px 10px 5px 10px;
+    margin: 0 auto;
     background: white;
     -webkit-border-radius: 8px;
     padding: 8px;
@@ -158,12 +162,12 @@ div#indicatorArea ul li{
     font: inherit;
     border: none;
     list-style-type: none;
-    margin: 2px;
-    padding: 3px;
+    margin: 1px;
+    padding: 2px;
     display: list-item;
     overflow: hidden;
 
-    -webkit-border-radius: 3px;
+    -webkit-border-radius: 2px;
     background: white;
     color: gray;
     font-size: 12px;
@@ -173,4 +177,14 @@ div#indicatorArea ul li{
 
 div#indicatorArea ul li img{
     width: 10px;
+}
+
+div.stroke {
+    background: transparent;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 480px;
+    color: white;
+    text-shadow: 0px 0px 10px black;
 }
