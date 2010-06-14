@@ -113,6 +113,18 @@ class Tumblr
 <div class="quote-text">#{text}</div>
 <div class="quote-source">#{source}</div>
 EOS
+      when /\Atext_post\Z/
+        ret[:type] = "text"
+        ret[:content] = post.innerHTML
+      when /\Avideo_post\Z/
+        ret[:type] = "video"
+        ret[:content] = post.innerHTML
+      when /\Achat_post\Z/
+        ret[:type] = "chat"
+        ret[:content] = post.innerHTML
+      when /\Alink_post\Z/
+        ret[:type] = "chat"
+        ret[:content] = post.innerHTML
       else
         ret = nil
       end
