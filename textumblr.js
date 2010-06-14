@@ -20,6 +20,7 @@ var lastPostId = null;
 
 var nextIndicatorId = 0;
 var nextAfterReblog = null;
+var skipMine = null;
 var skipPhoto = null;
 var highRes = null;
 var debugMode = null;
@@ -168,6 +169,9 @@ function prevPost(){
 	if (skipPhoto.checked && postData[currentPostIdx].type == "photo"){
 	    continue;
 	}
+	if (skipMine.checked && ! postData[currentPostIdx]["reblog_key"]){
+	    continue;
+	}
 	showPost(currentPostIdx);
 	return;
     }
@@ -175,27 +179,22 @@ function prevPost(){
 }
 
 function nextPost(){
-    prefetchImages(currentPostIdx + 1);
-    if (!skipPhoto.checked) {
-	if (currentPostIdx < postData.length - 1) {
-	    currentPostIdx++;
-	    showPost(currentPostIdx);
-	    prefetchPosts();
+    var oldCurrentPostIdx = currentPostIdx;
+    while(currentPostIdx < postData.length - 1){
+	currentPostIdx++;
+	if (skipPhoto.checked && postData[currentPostIdx].type == "photo"){
+	    continue;
 	}
-    } else {
-	var oldCurrentPostIdx = currentPostIdx;
-	while(currentPostIdx < postData.length - 1){
-	    currentPostIdx++;
-	    if (skipPhoto.checked && postData[currentPostIdx].type == "photo"){
-		continue;
-	    }
-	    showPost(currentPostIdx);
-	    prefetchPosts();
-	    return;
+	if (skipMine.checked && (!postData[currentPostIdx]["reblog_key"])){
+	    continue;
 	}
-	currentPostIdx = oldCurrentPostIdx;
-	prefetchPosts(true);
+	showPost(currentPostIdx);
+	prefetchPosts();
+	prefetchImages(currentPostIdx);
+	return;
     }
+    currentPostIdx = oldCurrentPostIdx;
+    prefetchPosts(true);
 }
 
 function reposIndicators(){
@@ -342,6 +341,7 @@ function getPermalink(){
     url = getBaseUrl() + "?offset=" + String(offset);
     if (highRes.checked) url += "&highres=true"
     if (skipPhoto.checked) url += "&skipphoto=true"
+    if (skipMine.checked) url += "&skipmine=true"
     url += "&width=" + encodeURI($('#widthControl')[0].value);
     return url;
 }
@@ -369,6 +369,7 @@ function setupTTT(){
     };
 
     nextAfterReblog = $('#nextAfterReblog')[0]
+    skipMine = $('#skipMine')[0];
     skipPhoto = $('#skipPhoto')[0];
     highRes = $('#highRes')[0];
     postUser = $('#currentPost > div.user')[0];
@@ -461,6 +462,9 @@ function setupTTT(){
     }
     if (params.skipphoto == "true"){
 	skipPhoto.checked = true;
+    }
+    if (params.skipmine == "true"){
+	skipMine.checked = true;
     }
     if (params.width){
 	$('#currentPost')[0].style.maxWidth = this.value;
