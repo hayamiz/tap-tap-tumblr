@@ -2,6 +2,7 @@
 body {
     margin: 0;
     background: #333;
+    font-family: Georgia, Times New Roman, serif;
 }
 
 div.postWrapper {
@@ -26,30 +27,12 @@ div.post a:hover {
     text-decoration: underline;
 }
 
-
-div.post ul {
-    background: none;
-    color: black;
-    font: inherit;
-    border: none;
-    margin: 5px 10px;
+div.post .title {
+    font-weight: bold;
+    font-size: larger;
+    padding: 3px;
+    text-shadow: rgba(0,0,0,0.2) 2px 2px 5px;
 }
-div.post ul li {
-    color: inherit;
-    font: inherit;
-    background: none;
-    border: none;
-    list-style-type: disc;
-    padding: 3px 5px;
-    margin-left: 18px;
-    marker-offset: 5px;
-    overflow: visible;
-}
-div.post ul li a {
-    font: inherit;
-    display: inline;
-}
-
 
 div.photo {
     text-align: center;
