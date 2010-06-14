@@ -19,6 +19,7 @@ var currentPostIdx = -1;
 var lastPostId = null;
 
 var nextIndicatorId = 0;
+var nextAfterReblog = null;
 var skipPhoto = null;
 var highRes = null;
 var debugMode = null;
@@ -299,6 +300,7 @@ function reblog(){
 	    var indicatorId = nextIndicatorId++;
 	    showIndicator(indicatorId, "this is yours", 1000)
 	}
+	if (nextAfterReblog.checked) nextPost();
     }
 }
 
@@ -357,15 +359,16 @@ function setupTTT(){
     $.fn.tap = function(fn){
 	if (navigator.userAgent.match("iPhone")){
 	    if (fn) {
-		this.bind("mousemove", fn);
+		this.bind("touchstart", fn);
 	    } else {
-		this.trigger("mousemove");
+		this.trigger("touchstart");
 	    }
 	} else {
 	    this.click(fn);
 	}
     };
 
+    nextAfterReblog = $('#nextAfterReblog')[0]
     skipPhoto = $('#skipPhoto')[0];
     highRes = $('#highRes')[0];
     postUser = $('#currentPost > div.user')[0];
@@ -480,6 +483,8 @@ function setupTTT(){
     if (navigator.userAgent.match("Chrome")){
 	highRes.checked = "true";
     }
+
+    setTimeout(scrollTo,500,0,1);
 }
 
 setupTTT();

@@ -1,7 +1,7 @@
 
 body {
     margin: 0;
-    background: #000;
+    background: #333;
 }
 
 div.postWrapper {
@@ -83,6 +83,10 @@ div.post blockquote p {
     padding: 0;
 }
 
+div.post div.content {
+    line-height: 1.4em;
+}
+
 .thinToolbar {
     -webkit-box-sizing: border-box;
     border-bottom: 1px solid #000;
@@ -128,18 +132,18 @@ ul.compactindividual li {
     float: left;
     display: block;
     padding: 5px 5px 5px 5px;
-    -webkit-box-shadow: rgba(0,0,0,.2) 1px 1px 3px;
-    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#4c4d4e), to(#404142));
+    -webkit-box-shadow: rgba(0,0,0,.4) 1px 1px 3px;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#4c4d4e), to(#303132));
 }
 ul.compactindividual li + li {
     float: right;
 }
 ul.compactindividual li a {
     color: #fff;
-    line-height: 14px;
+    line-height: 20px;
+    display: block;
     margin: -5px;
     padding: 3px;
-    -webkit-border-radius: 8px;
 }
 
 #preloadBuffer {
