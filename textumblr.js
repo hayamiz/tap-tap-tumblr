@@ -465,6 +465,11 @@ function setupTTT(){
 	    showKeyStroke("t: reblog");
 	    reblog();
 	    break;
+	case 118: // v
+	    showKeyStroke("v: open");
+	    post = postData[currentPostIdx];
+	    window.open(post.permalink);
+	    break;
 	}
     });
 
