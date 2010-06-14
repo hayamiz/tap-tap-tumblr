@@ -5,8 +5,21 @@ body {
     font-family: Georgia, Times New Roman, serif;
 }
 
+div.side-help span {
+    line-height: 15px;
+    font-size: 13px;
+    -webkit-border-radius: 5px;
+    background: black;
+    color: lightgray;
+    padding: 5px 8px;
+    margin: 0;
+    font-family: Courier New, monospace;
+    white-space: nowrap;
+    letter-spacing: -0.1em;
+}
+
 div.postWrapper {
-    margin: 5px;
+    padding: 0px 30px;
 }
 
 div.post {
@@ -51,19 +64,7 @@ div.post > div.header {
 }
 
 div.post > div.header > span.user {
-    float: left;
     line-height: 20px;
-}
-
-div.post > div.header > span.permalink {
-    float: right;
-    background: url(img/permalink.png) no-repeat center left;
-    line-height: 20px;
-    padding-left: 18px;
-}
-
-div.post > div.header > span.user > a {
-    text-decoration: none;
 }
 
 div.post > div.footer {
@@ -71,6 +72,13 @@ div.post > div.footer {
     margin-top: 3px;
     margin-bottom: -5px;
     color: lightgray;
+}
+
+div.post > div.footer > span.permalink {
+    float: right;
+    background: url(img/permalink.png) no-repeat center left;
+    line-height: 20px;
+    padding-left: 18px;
 }
 
 div.post blockquote {
@@ -87,6 +95,14 @@ div.post blockquote p {
 
 div.post div.content {
     line-height: 1.4em;
+}
+
+div.side-help {
+    -webkit-transform-origin:0,0;
+    -webkit-transform: rotate(90deg);
+    position: absolute;
+    left: 15px;
+    top: 30px;
 }
 
 .thinToolbar {

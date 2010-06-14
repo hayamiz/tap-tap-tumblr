@@ -30,7 +30,7 @@ var postPermalink = null;
 var postPhoto = null;
 var postPhotoImg = null;
 var postContent = null;
-var postFooter = null;
+var postInfo = null;
 var strokeMode = null;
 
 var imgPrefetchedIdx = 0;
@@ -132,7 +132,7 @@ function showPost(idx, highres){
 
 	postUser.innerHTML = post.user;
 	postPermalink.href = post.permalink;
-	postFooter.innerHTML = "type: " + post.type
+	postInfo.innerHTML = "type: " + post.type
 	if (post.type == "photo"){
 	    postPhotoImg.src = "./img/large-loading.gif";
 	    
@@ -379,11 +379,11 @@ function setupTTT(){
     skipPhoto = $('#skipPhoto')[0];
     highRes = $('#highRes')[0];
     postUser = $('#currentPost > div.header > span.user')[0];
-    postPermalink = $('#currentPost > div.header > span.permalink > a')[0];
+    postPermalink = $('#currentPost > div.footer > span.permalink > a')[0];
     postPhoto = $('#currentPost > div.photo')[0];
     postPhotoImg = $('#currentPost > div.photo > img')[0];
     postContent = $('#currentPost > div.content')[0];
-    postFooter = $('#currentPost > div.footer')[0];
+    postInfo = $('#currentPost > div.footer > span.info')[0];
     strokeMode = $('#strokeMode')[0];
 
     $('#currentPost > div.photo > img').tap(function(){
@@ -391,7 +391,7 @@ function setupTTT(){
     });
 
     // open new window if clicked
-    $('#currentPost > div.header > span.permalink > a').tap(function(){
+    $('#currentPost > div.footer > span.permalink > a').click(function(){
 	window.open(this.href);
 	return false;
     });
@@ -401,8 +401,13 @@ function setupTTT(){
     $('#prevButton').tap(prevPost);
     $('#nextButton').tap(nextPost);
     $('#reblogButton').tap(reblog);
-    $('#kaiokenButton').tap(kaioken);
-    $('#refreshButton').tap(refreshAction);
+    $('#kaiokenButton').click(kaioken);
+    $('#refreshButton').click(refreshAction);
+
+    if (navigator.userAgent.match("iPhone")){
+	$('div.side-help')[0].style.display = "none";
+	$('div.postWrapper')[0].style.padding = "0 10px";
+    }
 
     var strokeId = 0;
     var showKeyStroke = function(msg){
