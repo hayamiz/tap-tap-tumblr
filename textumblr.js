@@ -163,6 +163,7 @@ function showPost(idx, highres){
 }
 
 function prevPost(){
+    document.body.scrollTop = 0;
     var oldCurrentPostIdx = currentPostIdx;
     while(currentPostIdx > 0){
 	currentPostIdx--;
@@ -179,6 +180,7 @@ function prevPost(){
 }
 
 function nextPost(){
+    document.body.scrollTop = 0;
     var oldCurrentPostIdx = currentPostIdx;
     while(currentPostIdx < postData.length - 1){
 	currentPostIdx++;
@@ -437,12 +439,10 @@ function setupTTT(){
 	    break;
 	case 106: // j
 	    showKeyStroke("j: next");
-	    document.body.scrollTop = 0;
 	    nextPost();
 	    break;
 	case 107: // k
 	    showKeyStroke("k: prev");
-	    document.body.scrollTop = 0;
 	    prevPost();
 	    break;
 	case 115: // s
