@@ -89,8 +89,9 @@ class Tumblr
         ret[:reblog_key] = $~[1]
       end
 
-      user = post.search("div.meta > div > a")[0].to_s
+      user = post.search("div.meta > div > a")[0].innerHTML
       ret[:user] = user
+      ret[:permalink] = post.search("div.meta > div > a")[0][:href]
 
       post = post.search(".post")[0]
       case post[:class].split[1]
@@ -129,7 +130,7 @@ EOS
         ret[:type] = "chat"
         ret[:content] = post.innerHTML
       when /\Alink_post\Z/
-        ret[:type] = "chat"
+        ret[:type] = "link"
         ret[:content] = post.innerHTML
       else
         ret = nil

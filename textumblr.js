@@ -26,9 +26,11 @@ var highRes = null;
 var debugMode = null;
 
 var postUser = null;
+var postPermalink = null;
 var postPhoto = null;
 var postPhotoImg = null;
 var postContent = null;
+var postFooter = null;
 var strokeMode = null;
 
 var imgPrefetchedIdx = 0;
@@ -129,6 +131,8 @@ function showPost(idx, highres){
 	var post = postData[idx];
 
 	postUser.innerHTML = post.user;
+	postPermalink.href = post.permalink;
+	postFooter.innerHTML = "type: " + post.type
 	if (post.type == "photo"){
 	    postPhotoImg.src = "./img/large-loading.gif";
 	    
@@ -150,7 +154,7 @@ function showPost(idx, highres){
 	$('#currentPostIdx')[0].innerHTML = String(idx+1);
 
 	// open new window if clicked
-	$('#currentPost a').bind('click', function(){
+	$('#currentPost > div.content > a').tap(function(){
 	    window.open(this.href);
 	    return false;
 	});
@@ -374,14 +378,22 @@ function setupTTT(){
     skipMine = $('#skipMine')[0];
     skipPhoto = $('#skipPhoto')[0];
     highRes = $('#highRes')[0];
-    postUser = $('#currentPost > div.user')[0];
+    postUser = $('#currentPost > div.header > span.user')[0];
+    postPermalink = $('#currentPost > div.header > span.permalink > a')[0];
     postPhoto = $('#currentPost > div.photo')[0];
     postPhotoImg = $('#currentPost > div.photo > img')[0];
     postContent = $('#currentPost > div.content')[0];
+    postFooter = $('#currentPost > div.footer')[0];
     strokeMode = $('#strokeMode')[0];
 
-    $('#currentPost > div.photo > img').bind('click', function(){
+    $('#currentPost > div.photo > img').tap(function(){
 	showPost(currentPostIdx, true);
+    });
+
+    // open new window if clicked
+    $('#currentPost > div.header > span.permalink > a').tap(function(){
+	window.open(this.href);
+	return false;
     });
 
     highRes.onclick = function(){prefetchImages(currentPostIdx);}
