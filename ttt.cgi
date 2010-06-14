@@ -7,6 +7,7 @@ require 'uri'
 require 'hpricot'
 require 'time'
 require 'json'
+require 'fileutils'
 
 load './credentials.rb'
 
@@ -19,10 +20,13 @@ class Tumblr
     refresh_cookie()
   end
 
-  def refresh_cookie()
+  def refresh_cookie(force = false)
     @cookie_data = nil
     while @cookie_data == nil
       cookie_data_path = "./.cookie_#{@email}"
+      if force
+        FileUtils.remove(cookie_data_path)
+      end
       cookie_data = nil
       if File.exists?(cookie_data_path)
         cookie_data = Marshal.load(File.open(cookie_data_path))
@@ -60,6 +64,8 @@ class Tumblr
     res = call_api(:get, "www.tumblr.com", "/iphone", options)
     if res
       "var result = " + convert_dashboard_page(res.body).to_json + ";"
+    else
+      refresh_cookie(true)
     end
   end
 
@@ -138,6 +144,8 @@ EOS
                      "post-id" => id, "reblog-key" => reblog_key})
     if res
       "var result = " + res.body + ";"
+    else
+      refresh_cookie(true)
     end
   end
 
