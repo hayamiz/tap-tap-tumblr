@@ -200,13 +200,13 @@ function nextPost(){
 function reposIndicators(){
     var iarea = $('#indicatorArea');
     var iareaElem = iarea[0];
-    var l = "10px";
-    var t = (document.body.scrollTop +
+    var l = "0px";
+    var t = (window.pageYOffset +
 	     window.innerHeight -
-	     iareaElem.offsetHeight -
-	     10) + "px";
+	     iareaElem.offsetHeight) + "px";
     iareaElem.style.left = l;
     iareaElem.style.top = t;
+    $('#hoge').html();
 }
 
 
@@ -385,7 +385,6 @@ function setupTTT(){
     $('#reblogButton').tap(reblog);
     $('#kaiokenButton').tap(kaioken);
     $('#refreshButton').tap(refreshAction);
-    
 
     var strokeId = 0;
     var showKeyStroke = function(msg){

@@ -151,7 +151,8 @@ div#indicatorArea {
     color: black;
     font: inherit;
     border: none;
-    margin: 5px;
+    margin: 0;
+    padding: 5px;
     position: absolute;
     max-width: 50%;
     min-width: 1px;
@@ -162,13 +163,14 @@ div#indicatorArea ul{
     margin: 0;
     pardding: 0;
     border: none;
+    -webkit-padding-start: 0;
 }
 div#indicatorArea ul li{
     font: inherit;
-    border: none;
+    border: 1px black solid;
     list-style-type: none;
     margin: 1px;
-    padding: 2px;
+    padding: 3px;
     display: list-item;
     overflow: hidden;
 
