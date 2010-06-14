@@ -17,7 +17,6 @@ var revIndex = {}; // post-id => index of postData
 
 var currentPostIdx = -1;
 var lastPostId = null;
-var imgBuffer = [];
 
 var nextIndicatorId = 0;
 var skipPhoto = null;
@@ -30,24 +29,43 @@ var postPhotoImg = null;
 var postContent = null;
 var strokeMode = null;
 
+var imgPrefetchedIdx = 0;
+var imgPrefetchLastIdx = null;
+var imgPrefetchRingBufferIdx = 0;
+var imgPrefetchRingBuffer = new Array(config.prefetch_img_num);
+function putPrefetchRingBuffer(url){
+    var img = new Image();
+    img.src = url;
+    imgPrefetchRingBuffer[imgPrefetchRingBufferIdx] = img;
+    imgPrefetchRingBufferIdx++;
+    imgPrefetchRingBufferIdx = imgPrefetchRingBufferIdx % config.prefetch_img_num;
+}
 function prefetchImages(idx){
-    for(var idx in imgBuffer){
-	imgBuffer[idx].src = null;
-    }
-    imgBuffer = null;
-    imgBuffer = [];
-
-    for(var i = idx + 1;i < idx + config.prefetch_img_num + 1 && i < postData.length;i++){
-	if (postData[i].type == "photo"){
-	    var img = new Image();
-	    if (highRes.checked) {
-		img.src = postData[i].photo_url_large;
-	    } else {
-		img.src = postData[i].photo_url;
+    if (idx < imgPrefetchLastIdx) {
+	for(var i = idx + 1; i < imgPrefetchLastIdx;i++) {
+	    if (postData[i].type == "photo"){
+		if (highRes.checked) {
+		    putPrefetchRingBuffer(postData[i].photo_url_large);
+		} else {
+		    putPrefetchRingBuffer(postData[i].photo_url);
+		}
 	    }
-	    imgBuffer.push(img);
+	}
+    } else if (idx > imgPrefetchLastIdx){
+	if (idx + config.prefetch_img_num >= imgPrefetchedIdx){
+	    for(var i = imgPrefetchedIdx + 1;i < idx + config.prefetch_img_num;i++){
+		if (postData[i].type == "photo"){
+		    if (highRes.checked) {
+			putPrefetchRingBuffer(postData[i].photo_url_large);
+		    } else {
+			putPrefetchRingBuffer(postData[i].photo_url);
+		    }
+		}
+		imgPrefetchedIdx = i;
+	    }
 	}
     }
+    imgPrefetchLastIdx = idx;
 }
 
 var lastLoadTime = 0;
@@ -153,19 +171,28 @@ function prevPost(){
 }
 
 function nextPost(){
-    var oldCurrentPostIdx = currentPostIdx;
-    while(currentPostIdx < postData.length - 1){
-	currentPostIdx++;
-	if (skipPhoto.checked && postData[currentPostIdx].type == "photo"){
-	    continue;
+    if (!skipPhoto.checked) {
+	if (currentPostIdx < postData.length - 1) {
+	    currentPostIdx++;
+	    showPost(currentPostIdx);
+	    prefetchPosts();
+	    prefetchImages(currentPostIdx);
 	}
-	showPost(currentPostIdx);
-	prefetchPosts();
-	prefetchImages(currentPostIdx);
-	return;
+    } else {
+	var oldCurrentPostIdx = currentPostIdx;
+	while(currentPostIdx < postData.length - 1){
+	    currentPostIdx++;
+	    if (skipPhoto.checked && postData[currentPostIdx].type == "photo"){
+		continue;
+	    }
+	    showPost(currentPostIdx);
+	    prefetchPosts();
+	    prefetchImages(currentPostIdx);
+	    return;
+	}
+	currentPostIdx = oldCurrentPostIdx;
+	prefetchPosts(true);
     }
-    currentPostIdx = oldCurrentPostIdx;
-    prefetchPosts(true);
 }
 
 function reposIndicators(){
@@ -326,6 +353,18 @@ function setupTTT(){
 //     $('#reblogButton').bind('click', reblog);
 //     $('#kaiokenButton').bind('click', kaioken);
 
+    $.fn.tap = function(fn){
+	if (navigator.userAgent.match("iPhone")){
+	    if (fn) {
+		this.bind("mousemove", fn);
+	    } else {
+		this.trigger("mousemove");
+	    }
+	} else {
+	    this.click(fn);
+	}
+    };
+
     skipPhoto = $('#skipPhoto')[0];
     highRes = $('#highRes')[0];
     postUser = $('#currentPost > div.user')[0];
@@ -339,11 +378,13 @@ function setupTTT(){
     });
 
     highRes.onclick = function(){prefetchImages(currentPostIdx);}
+
     $('#prevButton').tap(prevPost);
     $('#nextButton').tap(nextPost);
     $('#reblogButton').tap(reblog);
     $('#kaiokenButton').tap(kaioken);
     $('#refreshButton').tap(refreshAction);
+    
 
     var strokeId = 0;
     var showKeyStroke = function(msg){
