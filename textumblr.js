@@ -30,7 +30,7 @@ var postContent = null;
 var strokeMode = null;
 
 var imgPrefetchedIdx = 0;
-var imgPrefetchLastIdx = null;
+var imgPrefetchLastIdx = 0;
 var imgPrefetchRingBufferIdx = 0;
 var imgPrefetchRingBuffer = new Array(config.prefetch_img_num);
 function putPrefetchRingBuffer(url){
@@ -42,7 +42,7 @@ function putPrefetchRingBuffer(url){
 }
 function prefetchImages(idx){
     if (idx < imgPrefetchLastIdx) {
-	for(var i = idx + 1; i < imgPrefetchLastIdx;i++) {
+	for(var i = idx + 1;i < postData.length && i < imgPrefetchLastIdx;i++) {
 	    if (postData[i].type == "photo"){
 		if (highRes.checked) {
 		    putPrefetchRingBuffer(postData[i].photo_url_large);
@@ -51,9 +51,11 @@ function prefetchImages(idx){
 		}
 	    }
 	}
-    } else if (idx > imgPrefetchLastIdx){
+    } else if (idx >= imgPrefetchLastIdx){
 	if (idx + config.prefetch_img_num >= imgPrefetchedIdx){
-	    for(var i = imgPrefetchedIdx + 1;i < idx + config.prefetch_img_num;i++){
+	    for(var i = idx + 1;
+		i < postData.length && i < idx + config.prefetch_img_num;
+		i++){
 		if (postData[i].type == "photo"){
 		    if (highRes.checked) {
 			putPrefetchRingBuffer(postData[i].photo_url_large);
@@ -71,6 +73,7 @@ function prefetchImages(idx){
 var lastLoadTime = 0;
 var autoLoader = setInterval(function(){
     prefetchPosts();
+    // prefetchImages(currentPostIdx+1);
 }, config.post_min_interval);
 
 function loadPosts(optparams){
@@ -171,12 +174,12 @@ function prevPost(){
 }
 
 function nextPost(){
+    prefetchImages(currentPostIdx + 1);
     if (!skipPhoto.checked) {
 	if (currentPostIdx < postData.length - 1) {
 	    currentPostIdx++;
 	    showPost(currentPostIdx);
 	    prefetchPosts();
-	    prefetchImages(currentPostIdx);
 	}
     } else {
 	var oldCurrentPostIdx = currentPostIdx;
@@ -187,7 +190,6 @@ function nextPost(){
 	    }
 	    showPost(currentPostIdx);
 	    prefetchPosts();
-	    prefetchImages(currentPostIdx);
 	    return;
 	}
 	currentPostIdx = oldCurrentPostIdx;
@@ -344,7 +346,6 @@ function getPermalink(){
 
 function refreshAction(){
     document.location.assign(getPermalink());
-    document.location.reload(true);
 }
 
 function setupTTT(){
@@ -425,7 +426,6 @@ function setupTTT(){
 	    break;
 	case 82: // r
 	    showKeyStroke("R");
-	    refreshAction();
 	    refreshAction();
 	    break;
 	case 104: // h
