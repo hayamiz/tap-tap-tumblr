@@ -8,6 +8,7 @@ require 'hpricot'
 require 'time'
 require 'json'
 require 'fileutils'
+require 'webrick'
 
 load './credentials.rb'
 
@@ -147,6 +148,7 @@ EOS
       "var result = " + res.body + ";"
     else
       refresh_cookie(true)
+      nil
     end
   end
 
@@ -190,10 +192,9 @@ EOS
 end
 
 def main(argv)
-  tumblr = Tumblr.new($email, $password)
-
   res = case $cgi.params["method"][0]
         when /\Adashboard\Z/
+          tumblr = Tumblr.new($email, $password)
           params = Hash.new
           params[:offset] = $cgi.params["offset"][0] if $cgi.params["offset"]
           tumblr.dashboard(params)
@@ -201,7 +202,21 @@ def main(argv)
           if $cgi.params["reblog_key"] && $cgi.params["id"]
             reblog_key = $cgi.params["reblog_key"][0]
             id = $cgi.params["id"][0]
-            tumblr.reblog(id, reblog_key)
+            _pwd = Dir.pwd
+            Process.fork{
+              WEBrick::Daemon.start
+              Dir.chdir(_pwd)
+              tumblr = Tumblr.new($email, $password)
+              50.times do
+                begin
+                  if tumblr.reblog(id, reblog_key)
+                    break
+                  end
+                rescue Timeout::Error => err
+                end
+              end
+            }
+            "var result = true;"
           else
             nil
           end
