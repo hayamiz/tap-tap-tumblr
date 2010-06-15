@@ -3,7 +3,10 @@
 ==============
 
 TapTapTumblr is a web application for viewing Tumblr dashboard and
-reblogging on iPhone Safari.
+reblogging. It enables an extremely high speed reblogging you have
+never experienced.
+
+See demo movie: http://www.youtube.com/watch?v=E2Ga_3XSR5c
 
  Prerequisites
 ---------------

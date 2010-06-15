@@ -205,6 +205,9 @@ def main(argv)
           else
             nil
           end
+        when /\Asleep\Z/
+          sleep(10)
+          "sleep"
         end
   res ||= "var result = null;"
 
