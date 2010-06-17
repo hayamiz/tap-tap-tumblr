@@ -3,7 +3,7 @@
 
 var config = {
     num: 50,
-    prefetch_num: 300,
+    prefetch_num: 500,
     prefetch_img_num: 50,
     post_min_interval: 3000,
     reblog_timeout: 120*1000
@@ -514,6 +514,7 @@ function setupTTT(){
 
     if (navigator.userAgent.match("Chrome")){
 	highRes.checked = "true";
+	config.prefetch_num = 1000;
     }
 
     setTimeout(scrollTo,500,0,1);
