@@ -374,6 +374,12 @@ function setupTTT(){
 	}
     };
 
+    if (navigator.userAgent.match("Chrome")){
+	var controls_html = $('#controls').html();
+	$('#controls').remove();
+	$('.postWrapper').after(controls_html);
+    }
+
     nextAfterReblog = $('#nextAfterReblog')[0]
     skipMine = $('#skipMine')[0];
     skipPhoto = $('#skipPhoto')[0];
