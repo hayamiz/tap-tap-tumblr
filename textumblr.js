@@ -139,12 +139,19 @@ function showPost(idx, highres){
 	    var img_src = post.photo_url;
 	    var img_width = "60%";
 	    if (highres || highRes.checked){
+		postPhotoImg.style.width = null;
+		var imgobj = new Image();
+		imgobj.onload = function(){
+		    adjustPhotoHeight(this.width, this.height);
+		}
+		imgobj.src = post.photo_url_large;
 		img_src = post.photo_url_large;
-		img_width = "100%";
+	    } else {
+		postPhotoImg.style.width = "60%";
 	    }
 
 	    postPhotoImg.src = img_src;
-	    postPhotoImg.style.width = img_width;
+	    postPhotoImg.src = img_src;
 	    postPhoto.style.display = "block";
 	} else {
 	    postPhoto.style.display = "none";
@@ -354,6 +361,32 @@ function getPermalink(){
 
 function refreshAction(){
     document.location.assign(getPermalink());
+}
+
+
+function adjustPhotoHeight(img_w, img_h){
+    if (!navigator.userAgent.match("iPhone")){
+	var img = $('div.photo img');
+	var max_h = (window.innerHeight - img.position().top - 10);
+	var max_w = postPhoto.offsetWidth;
+	if (img_h / img_w > max_h / max_w) {
+	    if (img_h > max_h){
+		img[0].height = max_h;
+		img[0].width = max_h * img_w / img_h;
+	    } else {
+		img[0].height = img_h;
+		img[0].width = img_w;
+	    }
+	} else {
+	    if (img_w > max_w){
+		img[0].width = max_w;
+		img[0].height = max_w * img_h / img_w;
+	    } else {
+		img[0].width = img_w;
+		img[0].height = img_h;
+	    }
+	}
+    }
 }
 
 function setupTTT(){
