@@ -174,7 +174,7 @@ function showPost(idx, highres){
 }
 
 function prevPost(){
-    document.body.scrollTop = 0;
+    scrollTo(0, 0);
     var oldCurrentPostIdx = currentPostIdx;
     while(currentPostIdx > 0){
 	currentPostIdx--;
@@ -191,7 +191,7 @@ function prevPost(){
 }
 
 function nextPost(){
-    document.body.scrollTop = 0;
+    scrollTo(0, 0);
     var oldCurrentPostIdx = currentPostIdx;
     while(currentPostIdx < postData.length - 1){
 	currentPostIdx++;
@@ -461,7 +461,7 @@ function setupTTT(){
 	    }
 	    var step = 10;
 	    var fontSize = maxSize;
-	    var top = window.innerHeight / 2 + document.body.scrollTop;
+	    var top = window.innerHeight / 2 + window.pageYOffset;
 	    elem.style.lineHeight = maxSize + "px";
 	    elem.style.fontSize = fontSize + "px";
 	    elem.style.top = top + "px";
@@ -480,9 +480,10 @@ function setupTTT(){
 	}
     };
     $(document).keypress(function(evt){
-	switch(evt.keyCode){
+	switch(evt.which){
 	case 32: // space
-	    document.body.scrollTop += 100;
+	    window.scrollTo(0, window.pageYOffset + 100);
+	    // document.body.scrollTop += 100;
 	    return false;
 	    break;
 	case 82: // r
