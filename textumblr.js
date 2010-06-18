@@ -407,7 +407,7 @@ function setupTTT(){
 	}
     };
 
-    if (navigator.userAgent.match("Chrome")){
+    if (!navigator.userAgent.match("iPhone")){
 	var controls_html = $('#controls').html();
 	$('#controls').remove();
 	$('.postWrapper').after(controls_html);
@@ -546,9 +546,15 @@ function setupTTT(){
 	$('#currentPost')[0].style.maxWidth = this.value;
     });
 
-    if (navigator.userAgent.match("Chrome")){
+    if (!navigator.userAgent.match("iPhone")){
 	highRes.checked = "true";
 	config.prefetch_num = 1000;
+    }
+
+    if (!navigator.userAgent.match("WebKit")){
+	var spans = $('#options > ul > li > span.toggle');
+	spans.removeClass("toggle");
+	spans.addClass("moz-toggle");
     }
 
     setTimeout(scrollTo,500,0,1);

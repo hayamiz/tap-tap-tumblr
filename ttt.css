@@ -43,10 +43,10 @@ div.post a:hover {
 }
 
 div.post .title {
+    font-family: Verdana, Arial, sans-serif;
     font-weight: bold;
     font-size: larger;
     padding: 3px;
-    text-shadow: rgba(0,0,0,0.2) 2px 2px 5px;
 }
 
 div.photo {
@@ -208,7 +208,7 @@ div#indicatorArea ul li{
     -moz-border-radius: 5px;
     background: white;
     color: gray;
-    font-size: 15px;
+    font-size: 10px;
     font-weight: normal;
     opacity: 0.8;
 }
@@ -366,11 +366,16 @@ ul.form li.error {
 ul.form li.error + li.error {
     border-top: 0;
 }
+
+ul.rounded li {
+    font-family: Georgia, Times New Roman, serif;
+}
+
 ul.rounded li input[type="text"], ul.rounded li input[type="password"], ul.rounded li textarea, ul.rounded li select {
     color: #fff;
     /* background: transparent url(../.png); */
     border: 0;
-    font: normal 17px Helvetica;
+    font-size: 17px;
     padding: 0;
     display: inline-block;
     margin-left: 0px;
@@ -384,11 +389,14 @@ ul.rounded li textarea {
     text-indent: -2px;
 }
 ul.rounded li select {
+    font-family: Georgia, "Times New Roman", serif;
     text-indent: 0px;
+    font-size: 17px;
     background: transparent url(img/chevron.png) no-repeat right center;
     -webkit-appearance: textfield;
     -moz-appearance: textfield;
-    margin-left: 0;
+    margin-left: -5px;
+    padding-left: 0;
     width: 100%;
 }
 ul.rounded li input[type="checkbox"], ul.rounded li input[type="radio"] {
@@ -397,7 +405,7 @@ ul.rounded li input[type="checkbox"], ul.rounded li input[type="radio"] {
 }
 ul.rounded li input[type="checkbox"]:after, ul.rounded li input[type="radio"]:after {
     content: attr(title);
-    font: 17px Helvetica;
+    font-size: 17px;
     display: block;
     width: 246px;
     color: #fff;
@@ -420,10 +428,6 @@ ul.rounded li input[type="checkbox"]:after, ul.rounded li input[type="radio"]:af
     -webkit-border-radius: 5px;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     -webkit-transition: left .15s;
-    -moz-appearance: textarea;
-    -moz-border-radius: 5px;
-    -moz-tap-highlight-color: rgba(0,0,0,0);
-    -moz-transition: left .15s;
     background-color: transparent;
     background: #fff url(img/on_off.png) 0 0 no-repeat;
     border: 0;
@@ -434,6 +438,11 @@ ul.rounded li input[type="checkbox"]:after, ul.rounded li input[type="radio"]:af
     position: absolute;
     top: 0;
     width: 149px;
+}
+
+.moz-toggle {
+    position: relative;
+    float: right;
 }
 
 #debug-console {
