@@ -389,6 +389,32 @@ function adjustPhotoHeight(img_w, img_h){
     }
 }
 
+function runThroughBench(){
+    if (postData.length > 0){
+	var idx_restore = currentPostIdx;
+	var t0 = (new Date()).getTime();
+
+	currentPostIdx = 0;
+	showPost(0);
+	setTimeout(runThroughBench_iter, 1, t0, 0, idx_restore, -1);
+    }
+}
+
+function runThroughBench_iter(t0, count, idx_restore, lastidx){
+    if (currentPostIdx != lastidx){
+	lastidx = currentPostIdx;
+	nextPost();
+	setTimeout(runThroughBench_iter, 1, t0, count+1, idx_restore, lastidx);
+    } else {
+	var t1 = (new Date()).getTime();
+	alert("time: " + ((t1 - t0) / 1000) + " sec" + "\n" +
+	      count + "posts" + "\n" +
+	      ((t1 - t0) / 1000 / count) + " sec/post" );
+	currentPostIdx = idx_restore;
+	showPost(currentPostIdx);
+    }
+}
+
 function setupTTT(){
 //     $('#prevButton').bind('click', prevPost);
 //     $('#nextButton').bind('click', nextPost);
@@ -485,6 +511,9 @@ function setupTTT(){
 	    window.scrollTo(0, window.pageYOffset + 100);
 	    // document.body.scrollTop += 100;
 	    return false;
+	    break;
+	case 66: // B
+	    runThroughBench();
 	    break;
 	case 82: // r
 	    showKeyStroke("R");

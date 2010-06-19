@@ -101,7 +101,7 @@ div.post div.content {
 div.side-help {
     -webkit-transform-origin:0,0;
     -webkit-transform: rotate(90deg);
-    -moz-transform: translate(-175px, 170px) rotate(90deg);
+    -moz-transform: translate(-50%, 200px) rotate(90deg);
     position: absolute;
     left: 15px;
     top: 30px;
