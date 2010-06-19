@@ -407,12 +407,29 @@ function runThroughBench_iter(t0, count, idx_restore, lastidx){
 	setTimeout(runThroughBench_iter, 1, t0, count+1, idx_restore, lastidx);
     } else {
 	var t1 = (new Date()).getTime();
-	alert("time: " + ((t1 - t0) / 1000) + " sec" + "\n" +
-	      count + "posts" + "\n" +
-	      ((t1 - t0) / 1000 / count) + " sec/post" );
+	var ret = "time: " + ((t1 - t0) / 1000) + " sec" + "\n" +
+	    count + "posts" + "\n" +
+	    ((t1 - t0) / 1000 / count) + " sec/post";
+	alert(ret);
 	currentPostIdx = idx_restore;
 	showPost(currentPostIdx);
     }
+}
+
+function bannerize(elem, xsize, ysize){
+    if (!xsize) xsize = 5;
+    if (!ysize) ysize = 1;
+
+    var elemOjb = $(elem);
+    var maxSize = window.innerHeight / 1.5;
+    if (maxSize * xsize > window.innerWidth){
+	maxSize = window.innerWidth / xsize;
+    }
+    var fontSize = maxSize;
+    var top = window.innerHeight / 2 + window.pageYOffset - (maxSize * ysize) / 2;
+    elem.style.lineHeight = maxSize + "px";
+    elem.style.fontSize = fontSize + "px";
+    elem.style.top = top + "px";
 }
 
 function setupTTT(){
@@ -513,7 +530,22 @@ function setupTTT(){
 	    return false;
 	    break;
 	case 66: // B
-	    runThroughBench();
+	    $("#home").append('<div class="stroke" id="bench"><span>Benchmark</span></div>');
+	    bannerize($('#bench')[0], 6);
+	    setTimeout(function(){
+		$('#bench').remove();
+		$("#home").append('<div class="stroke" id="bench-ready"><span>Ready</span></div>');
+		bannerize($('#bench-ready')[0]);
+		setTimeout(function(){
+		    $('#bench-ready').remove();
+		    $("#home").append('<div class="stroke" id="bench-go"><span>Go</span></div>');
+		    bannerize($('#bench-go')[0]);
+		    $('#bench-go').fadeOut(1000, function(){
+			$('#bench-go').remove();
+		    });
+		    runThroughBench();
+		}, 1500);
+	    }, 1500);
 	    break;
 	case 82: // r
 	    showKeyStroke("R");
