@@ -107,6 +107,20 @@ div.side-help {
     top: 30px;
 }
 
+#flowerIcon {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    z-index: 100;
+}
+
+#flowerIcon img{
+    width: 24px;
+    height: 24px;
+}
+
 .thinToolbar {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -451,4 +465,8 @@ ul.rounded li input[type="checkbox"]:after, ul.rounded li input[type="radio"]:af
     font-size: 10px;
     background: white;
     color: black;
+}
+
+#runBench {
+    
 }

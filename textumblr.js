@@ -176,9 +176,7 @@ function showPost(idx, highres){
 	    return false;
 	});
 
-	// update permalink
-	var url = getPermalink();
-	$('#permalink').html('permalink: <a href="'+url+'">'+url+'</a>');
+	updatePermalink();
     }
     reposIndicators();
 }
@@ -369,6 +367,10 @@ function getPermalink(){
     url += "&width=" + encodeURI($('#widthControl')[0].value);
     return url;
 }
+function updatePermalink(){
+    var url = getPermalink();
+    $('#permalink').html('permalink: <a href="'+url+'">'+url+'</a>');
+}
 
 function refreshAction(){
     document.location.assign(getPermalink());
@@ -473,7 +475,12 @@ function toggleEndlessSummer(force){
     }
 
     if (endlessSummer) {
+	$('#flowerIcon > img')[0].src = "./img/orange-flower.png";
+	$('.thinToolbar')[0].style.backgroundImage = "url(./img/toolbar-summer.png)";
 	esMaxPage = 100000;
+    } else {
+	$('#flowerIcon > img')[0].src = "./img/blue-flower.png";
+	$('.thinToolbar')[0].style.backgroundImage = "url(./img/toolbar.png)";
     }
 }
 
@@ -531,7 +538,7 @@ function setupTTT(){
     $('#kaiokenButton').click(kaioken);
     $('#refreshButton').click(refreshAction);
     $('#runBench').click(launchBench);
-    $('#endlessSummerButton').click(toggleEndlessSummer);
+    $('#flowerIcon > img').click(function(){toggleEndlessSummer();});
 
     if (navigator.userAgent.match("iPhone")){
 	$('div.side-help')[0].style.display = "none";
