@@ -88,14 +88,24 @@ function loadPosts(optparams){
 
     var params = {method: "dashboard"};
     if (lastPostId) params.offset = String(lastPostId);
+    var page = null;
+    if (endlessSummer){
+	page = Math.floor(Math.random() * esMaxPage);
+	params.page = page;
+    }
     $.extend(params, optparams);
 
     var ajax_params = { url: './ttt.cgi',
 			data: params,
 			success: function(data){
-			    eval(data);
+			    result = data;
 			    if (result){
 				// success
+				if (result.length == 0 && endlessSummer){
+				    esMaxPage = page - 1;
+				    lastLoadTime = 0;
+				    return loadPosts();
+				}
 				for(var idx in result){
 				    post = result[idx];
 				    if (!revIndex[post.id]){
@@ -280,7 +290,7 @@ function doReblog(id, reblog_key, retry_num){
     var ajax_params = { url: reblog_url,
 			timeout: config.reblog_timeout,
 			success: function(data){
-			    eval(data);
+			    result = data;
 			    if (result){
 				showIndicator(indicatorId, "reblog done", 1000);
 				// showIndicator(indicatorId, "reblog done");
@@ -355,6 +365,7 @@ function getPermalink(){
     if (highRes.checked) url += "&highres=true"
     if (skipPhoto.checked) url += "&skipphoto=true"
     if (skipMine.checked) url += "&skipmine=true"
+    if (endlessSummer) url += "&endless_summer=true"
     url += "&width=" + encodeURI($('#widthControl')[0].value);
     return url;
 }
@@ -387,6 +398,26 @@ function adjustPhotoHeight(img_w, img_h){
 	    }
 	}
     }
+}
+
+function launchBench(){
+    scrollTo(0, 0);
+    $("#home").append('<div class="stroke" id="bench"><span>Benchmark</span></div>');
+    bannerize($('#bench')[0], 6);
+    setTimeout(function(){
+	$('#bench').remove();
+	$("#home").append('<div class="stroke" id="bench-ready"><span>Ready</span></div>');
+	bannerize($('#bench-ready')[0]);
+	setTimeout(function(){
+	    $('#bench-ready').remove();
+	    $("#home").append('<div class="stroke" id="bench-go"><span>Go</span></div>');
+	    bannerize($('#bench-go')[0]);
+	    $('#bench-go').fadeOut(1000, function(){
+		$('#bench-go').remove();
+	    });
+	    runThroughBench();
+	}, 1500);
+    }, 1500);
 }
 
 function runThroughBench(){
@@ -430,6 +461,20 @@ function bannerize(elem, xsize, ysize){
     elem.style.lineHeight = maxSize + "px";
     elem.style.fontSize = fontSize + "px";
     elem.style.top = top + "px";
+}
+
+var endlessSummer = false;
+var esMaxPage = 100000;
+function toggleEndlessSummer(force){
+    if (force) {
+	endlessSummer = true;
+    } else {
+	endlessSummer = !endlessSummer;
+    }
+
+    if (endlessSummer) {
+	esMaxPage = 100000;
+    }
 }
 
 function setupTTT(){
@@ -485,6 +530,8 @@ function setupTTT(){
     $('#reblogButton').tap(reblog);
     $('#kaiokenButton').click(kaioken);
     $('#refreshButton').click(refreshAction);
+    $('#runBench').click(launchBench);
+    $('#endlessSummerButton').click(toggleEndlessSummer);
 
     if (navigator.userAgent.match("iPhone")){
 	$('div.side-help')[0].style.display = "none";
@@ -530,22 +577,7 @@ function setupTTT(){
 	    return false;
 	    break;
 	case 66: // B
-	    $("#home").append('<div class="stroke" id="bench"><span>Benchmark</span></div>');
-	    bannerize($('#bench')[0], 6);
-	    setTimeout(function(){
-		$('#bench').remove();
-		$("#home").append('<div class="stroke" id="bench-ready"><span>Ready</span></div>');
-		bannerize($('#bench-ready')[0]);
-		setTimeout(function(){
-		    $('#bench-ready').remove();
-		    $("#home").append('<div class="stroke" id="bench-go"><span>Go</span></div>');
-		    bannerize($('#bench-go')[0]);
-		    $('#bench-go').fadeOut(1000, function(){
-			$('#bench-go').remove();
-		    });
-		    runThroughBench();
-		}, 1500);
-	    }, 1500);
+	    launchBench();
 	    break;
 	case 82: // r
 	    showKeyStroke("R");
@@ -588,6 +620,9 @@ function setupTTT(){
     }
     if (params.skipmine == "true"){
 	skipMine.checked = true;
+    }
+    if (params.endless_summer = "true"){
+	toggleEndlessSummer(true);
     }
     if (params.width){
 	$('#currentPost')[0].style.maxWidth = this.value;
