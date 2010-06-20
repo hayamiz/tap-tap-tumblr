@@ -615,7 +615,7 @@ function setupTTT(){
 	    showKeyBanner("R");
 	    refreshAction();
 	    break;
-	case 82: // S
+	case 83: // S
 	    showKeyBanner("S");
 	    toggleEndlessSummer();
 	    break;
