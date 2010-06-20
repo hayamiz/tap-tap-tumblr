@@ -31,7 +31,7 @@ var postPhoto = null;
 var postPhotoImg = null;
 var postContent = null;
 var postInfo = null;
-var strokeMode = null;
+var bannerMode = null;
 
 var imgPrefetchedIdx = 0;
 var imgPrefetchLastIdx = 0;
@@ -87,11 +87,12 @@ function loadPosts(optparams){
     lastLoadTime = (new Date()).getTime();
 
     var params = {method: "dashboard"};
-    if (lastPostId) params.offset = String(lastPostId);
     var page = null;
     if (endlessSummer){
 	page = Math.floor(Math.random() * esMaxPage);
 	params.page = page;
+    } else {
+	if (lastPostId) params.offset = String(lastPostId);
     }
     $.extend(params, optparams);
 
@@ -358,6 +359,7 @@ function getPermalink(){
     if(currentPostIdx > 0){
 	idx--;
     }
+    if (!postData[idx]) return;
     offset = postData[idx].id;
     url = getBaseUrl() + "?offset=" + String(offset);
     if (highRes.checked) url += "&highres=true"
@@ -404,15 +406,15 @@ function adjustPhotoHeight(img_w, img_h){
 
 function launchBench(){
     scrollTo(0, 0);
-    $("#home").append('<div class="stroke" id="bench"><span>Benchmark</span></div>');
+    $("#home").append('<div class="banner" id="bench"><span>Benchmark</span></div>');
     bannerize($('#bench')[0], 6);
     setTimeout(function(){
 	$('#bench').remove();
-	$("#home").append('<div class="stroke" id="bench-ready"><span>Ready</span></div>');
+	$("#home").append('<div class="banner" id="bench-ready"><span>Ready</span></div>');
 	bannerize($('#bench-ready')[0]);
 	setTimeout(function(){
 	    $('#bench-ready').remove();
-	    $("#home").append('<div class="stroke" id="bench-go"><span>Go</span></div>');
+	    $("#home").append('<div class="banner" id="bench-go"><span>Go</span></div>');
 	    bannerize($('#bench-go')[0]);
 	    $('#bench-go').fadeOut(1000, function(){
 		$('#bench-go').remove();
@@ -463,6 +465,22 @@ function bannerize(elem, xsize, ysize){
     elem.style.lineHeight = maxSize + "px";
     elem.style.fontSize = fontSize + "px";
     elem.style.top = top + "px";
+    
+}
+
+var bannerId = 0;
+function showBanner(msg, size){
+    var id = "banner"+bannerId++;
+    $("#home").append('<div class="banner" id="'+id+'"><span>'+msg+'</span></div>');
+    if (!size) size = msg.length / 1.5;
+    bannerize($('#'+id)[0], size);
+
+    setTimeout(function(){
+	$('#'+id).fadeOut(500);
+    }, 1000);
+    setTimeout(function(){
+	$('#'+id).remove(500);
+    }, 1500);
 }
 
 var endlessSummer = false;
@@ -477,11 +495,18 @@ function toggleEndlessSummer(force){
     if (endlessSummer) {
 	$('#flowerIcon > img')[0].src = "./img/orange-flower.png";
 	$('.thinToolbar')[0].style.backgroundImage = "url(./img/toolbar-summer.png)";
+	showBanner('Endless summer: ON <img src="./img/orange-flower.png" style="vertical-align: -7px; height: 1em;" />', 15);
 	esMaxPage = 100000;
+	if (postData.length > 0){
+	    postData = postData.slice(0, currentPostIdx+1);
+	    $('#totalPostNum').html(String(postData.length));
+	}
     } else {
 	$('#flowerIcon > img')[0].src = "./img/blue-flower.png";
 	$('.thinToolbar')[0].style.backgroundImage = "url(./img/toolbar.png)";
+	showBanner('Endless summer: OFF <img src="./img/blue-flower.png" style="vertical-align: -7px; height: 1em;" />', 15);
     }
+    updatePermalink();
 }
 
 function setupTTT(){
@@ -518,7 +543,7 @@ function setupTTT(){
     postPhotoImg = $('#currentPost > div.photo > img')[0];
     postContent = $('#currentPost > div.content')[0];
     postInfo = $('#currentPost > div.footer > span.info')[0];
-    strokeMode = $('#strokeMode')[0];
+    bannerMode = $('#bannerMode')[0];
 
     $('#currentPost > div.photo > img').tap(function(){
 	showPost(currentPostIdx, true);
@@ -545,12 +570,12 @@ function setupTTT(){
 	$('div.postWrapper')[0].style.padding = "0 10px";
     }
 
-    var strokeId = 0;
-    var showKeyStroke = function(msg){
-	var thisStrokeId = "stroke"+(strokeId++);
-	if (strokeMode.checked){
-	    $("#home").append('<div class="stroke" id="'+thisStrokeId+'"><span>'+msg+'</span></div>');
-	    var elemOjb = $('#'+thisStrokeId);
+    var bannerId = 0;
+    var showKeyBanner = function(msg){
+	var thisBannerId = "banner"+(bannerId++);
+	if (bannerMode.checked){
+	    $("#home").append('<div class="banner" id="'+thisBannerId+'"><span>'+msg+'</span></div>');
+	    var elemOjb = $('#'+thisBannerId);
 	    var elem = elemOjb[0];
 	    var maxSize = window.innerHeight / 1.5;
 	    if (maxSize * 5 > window.innerWidth){
@@ -586,32 +611,36 @@ function setupTTT(){
 	case 66: // B
 	    launchBench();
 	    break;
-	case 82: // r
-	    showKeyStroke("R");
+	case 82: // R
+	    showKeyBanner("R");
 	    refreshAction();
 	    break;
+	case 82: // S
+	    showKeyBanner("S");
+	    toggleEndlessSummer();
+	    break;
 	case 104: // h
-	    showKeyStroke("h: toggle");
+	    showKeyBanner("h: toggle");
 	    highRes.checked = ! highRes.checked;
 	    break;
 	case 106: // j
-	    showKeyStroke("j: next");
+	    showKeyBanner("j: next");
 	    nextPost();
 	    break;
 	case 107: // k
-	    showKeyStroke("k: prev");
+	    showKeyBanner("k: prev");
 	    prevPost();
 	    break;
 	case 115: // s
-	    showKeyStroke("s: toggle");
+	    showKeyBanner("s: toggle");
 	    skipPhoto.checked = ! skipPhoto.checked;
 	    break;
 	case 116: // t
-	    showKeyStroke("t: reblog");
+	    showKeyBanner("t: reblog");
 	    reblog();
 	    break;
 	case 118: // v
-	    showKeyStroke("v: open");
+	    showKeyBanner("v: open");
 	    post = postData[currentPostIdx];
 	    window.open(post.permalink);
 	    break;
@@ -628,7 +657,7 @@ function setupTTT(){
     if (params.skipmine == "true"){
 	skipMine.checked = true;
     }
-    if (params.endless_summer = "true"){
+    if (params.endless_summer == "true"){
 	toggleEndlessSummer(true);
     }
     if (params.width){

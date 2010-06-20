@@ -101,7 +101,7 @@ div.post div.content {
 div.side-help {
     -webkit-transform-origin:0,0;
     -webkit-transform: rotate(90deg);
-    -moz-transform: translate(-50%, 200px) rotate(90deg);
+    -moz-transform: translate(-50%, 230px) rotate(90deg);
     position: absolute;
     left: 15px;
     top: 30px;
@@ -231,7 +231,7 @@ div#indicatorArea ul li img{
     width: 10px;
 }
 
-div.stroke {
+div.banner {
     font-size: 1px;
     background: transparent;
     position: absolute;
@@ -241,7 +241,7 @@ div.stroke {
     color: gray;
 }
 
-div.stroke span {
+div.banner span {
     background: white;
     -webkit-border-radius: 10px;
     color: gray;
