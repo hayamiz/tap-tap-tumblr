@@ -1,0 +1,8 @@
+
+<Files ~ "\.rb$">
+  deny from all
+</Files>
+
+<Files ~ "\.cookie_">
+  deny from all
+</Files>
