@@ -64,7 +64,7 @@ class Tumblr
   def dashboard(options = {})
     res = call_api(:get, "www.tumblr.com", "/iphone", options)
     if res
-      "var result = " + convert_dashboard_page(res.body).to_json + ";"
+      convert_dashboard_page(res.body).to_json
     else
       refresh_cookie(true)
     end
@@ -145,7 +145,7 @@ EOS
                    {"email" => @email, "password" => @password,
                      "post-id" => id, "reblog-key" => reblog_key})
     if res
-      "var result = " + res.body + ";"
+      res.body
     else
       refresh_cookie(true)
       nil
@@ -197,6 +197,7 @@ def main(argv)
           tumblr = Tumblr.new($email, $password)
           params = Hash.new
           params[:offset] = $cgi.params["offset"][0] if $cgi.params["offset"]
+          params[:page] = $cgi.params["page"][0] if $cgi.params["page"]
           tumblr.dashboard(params)
         when /\Areblog\Z/
           if $cgi.params["reblog_key"] && $cgi.params["id"]
@@ -216,7 +217,7 @@ def main(argv)
                 end
               end
             }
-            "var result = true;"
+            "true"
           else
             nil
           end
@@ -224,9 +225,9 @@ def main(argv)
           sleep(10)
           "sleep"
         end
-  res ||= "var result = null;"
+  res ||= "null"
 
-  $cgi.out("text/javascript") do
+  $cgi.out("application/json") do
     res
   end
 end
