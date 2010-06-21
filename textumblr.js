@@ -516,7 +516,7 @@ function setupTTT(){
 //     $('#kaiokenButton').bind('click', kaioken);
 
     $.fn.tap = function(fn){
-	if (navigator.userAgent.match("iPhone")){
+	if (navigator.userAgent.match("(iPhone|iPad)")){
 	    if (fn) {
 		this.bind("touchstart", fn);
 	    } else {
@@ -527,7 +527,7 @@ function setupTTT(){
 	}
     };
 
-    if (!navigator.userAgent.match("iPhone")){
+    if (!navigator.userAgent.match("(iPhone|iPad)")){
 	var controls_html = $('#controls').html();
 	$('#controls').remove();
 	$('.postWrapper').after(controls_html);
