@@ -644,8 +644,7 @@ function setupTTT(){
 	    toggleEndlessSummer();
 	    break;
 	case 104: // h
-	    showKeyBanner("h: toggle");
-	    highRes.checked = ! highRes.checked;
+	    if (stage) stage.prevPage();
 	    break;
 	case 105: // i
 	    toggleImageStage();
@@ -657,6 +656,9 @@ function setupTTT(){
 	case 107: // k
 	    showKeyBanner("k: prev");
 	    prevPost();
+	    break;
+	case 108: // l
+	    if (stage) stage.nextPage();
 	    break;
 	case 115: // s
 	    showKeyBanner("s: toggle");
