@@ -121,6 +121,19 @@ div.side-help {
     height: 24px;
 }
 
+#stagingButton {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 2px;
+    left: 35px;
+    z-index: 100;
+}
+
+#stagingButton img{
+    height: 26px;
+}
+
 .thinToolbar {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -493,6 +506,9 @@ div.tile-controls {
     z-index: 300;
     -webkit-border-radius: 10px;
     background: white;
+    line-height: 20px;
+    font-size: 18px;
+    text-align: center;
 }
 div.tiles {
     margin: 0;
@@ -512,7 +528,7 @@ div.tiles > div.tile {
     padding: 0;
     margin: 0;
     overflow: hidden;
-    background: lightsteelblue;
+    background: white;
 }
 
 div.tiles > div.tile > a {

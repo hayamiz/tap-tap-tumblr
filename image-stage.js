@@ -6,7 +6,7 @@ var ImageStage = function(postdata){
     var tcid = "tile-control-"+id;
     $(document.body).append('<div class="image-stage" id="'+id+'"></div>');
     $(document.body).append('<div class="tiles" id="'+tid+'"></div>');
-    $(document.body).append('<div class="tile-controls" id="'+tcid+'">hoge</div>');
+    $(document.body).append('<div class="tile-controls" id="'+tcid+'"><a class="prev">&laquo;</a><a class="next">&raquo;</a></div>');
     var stage = $("#"+id);
     var tiles = $("#"+tid);
     var tileControl = $("#"+tcid);
@@ -14,8 +14,6 @@ var ImageStage = function(postdata){
     var stageElem = stage[0];
     var tilesElem = tiles[0];
     var tileControlElem = tileControl[0];
-    stage.click(function(){ $("#"+tid).remove(); $("#"+id).remove(); $("#"+tcid).remove(); });
-    tiles.click(function(){ $("#"+tid).remove(); $("#"+id).remove(); $("#"+tcid).remove(); });
 
     // calculate size
     var colnum = Math.floor((window.innerWidth - 20) / 120);
@@ -33,20 +31,44 @@ var ImageStage = function(postdata){
     tileControlElem.style.top = (20 + tilesElem.offsetHeight)+"px";
     tileControlElem.style.left = tilesElem.style.left;
 
+    var close = function(){
+	$("#"+tid).remove(); $("#"+id).remove(); $("#"+tcid).remove();
+    }
+    stage.click(close);
+    tiles.click(close);
+
     this.rownum = rownum;
     this.colnum = colnum;
     this.size = rownum * colnum;
-    this.postdata = postdata;
+    for(var i = 0;i < postdata.length;i++){ postdata[i].idx = i; };
+    this.postdata = postdata.filter(function(x){return x.type == "photo";});
+    this.page = 0;
+    this.pagenum = Math.ceil(this.postdata.length / this.size);
     this.show = function(page){
-	if (!page || page < 0) page = 0;
-	for(var i = this.size * page, photonum = 0;
-	    i < this.postdata.length && photonum < this.size;
+	if (!page) page = this.page;
+	if (page < 0) page = 0;
+	if (page >= this.pagenum) page = this.pagenum - 1;
+	this.page = page;
+
+	for(var i = this.size * page;
+	    i < this.postdata.length && i < this.size * (page + 1);
 	    i++){
-	    if (postdata[i].type == "photo"){
-		tiles.append('<div class="tile"><a><span><img src="'+postdata[i].photo_url_small+'" /></span></a></div>');
-		photonum++;
-	    }
+	    var post = this.postdata[i];
+	    tiles.append('<div id="tile'+i+'" class="tile"><a><span><img src="'+post.photo_url_small+'" /></span></a></div>');
+	    (function(i, postidx){
+		$("#tile"+i+" > a").click(function(){
+		    close();
+		    currentPostIdx = postidx;
+		    showPost(postidx);
+		});
+	    })(i, post.idx);
 	}
+    }
+    this.nextPage = function(){
+	this.show(this.page + 1);
+    }
+    this.prevPage = function(){
+	this.show(this.page - 1);
     }
 
     this.show(0);

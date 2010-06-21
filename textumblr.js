@@ -580,6 +580,7 @@ function setupTTT(){
     $('#refreshButton').click(refreshAction);
     $('#runBench').click(launchBench);
     $('#flowerIcon > img').click(function(){toggleEndlessSummer();});
+    $('#stagingButton > img').click(function(){ showImageStage(); });
 
     if (navigator.userAgent.match("iPhone")){
 	$('div.side-help')[0].style.display = "none";
