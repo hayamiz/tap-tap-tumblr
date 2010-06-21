@@ -495,12 +495,13 @@ function showBanner(msg, size){
 
 var stage = null;
 function toggleImageStage(){
-    if (stage){
+    if (stage && !stage.closed){
 	stage.close();
 	stage = null;
     } else {
-	if (postData.length > 0)
-	    stage = new ImageStage(postData);
+	if (postData.length > 0){
+	    stage = new ImageStage(postData, currentPostIdx);
+	}
     }
 }
 
@@ -644,7 +645,7 @@ function setupTTT(){
 	    toggleEndlessSummer();
 	    break;
 	case 104: // h
-	    if (stage) stage.prevPage();
+	    if (stage && !stage.closed) stage.prevPage();
 	    break;
 	case 105: // i
 	    toggleImageStage();
@@ -658,7 +659,7 @@ function setupTTT(){
 	    prevPost();
 	    break;
 	case 108: // l
-	    if (stage) stage.nextPage();
+	    if (stage && !stage.closed) stage.nextPage();
 	    break;
 	case 115: // s
 	    showKeyBanner("s: toggle");
