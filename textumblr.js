@@ -89,7 +89,7 @@ function loadPosts(optparams){
     var params = {method: "dashboard"};
     var page = null;
     if (endlessSummer){
-	page = Math.floor(Math.random() * esMaxPage);
+	page = Math.floor(Math.random() * esPageUpper);
 	params.page = page;
     } else {
 	if (lastPostId) params.offset = String(lastPostId);
@@ -102,10 +102,20 @@ function loadPosts(optparams){
 			    result = data;
 			    if (result){
 				// success
-				if (result.length == 0 && endlessSummer){
-				    esMaxPage = page - 1;
-				    lastLoadTime = 0;
-				    return loadPosts();
+				if (endlessSummer) {
+				    // update range
+				    if (result.length == 0){
+					esMaxPage = page - 1;
+					esPageUpper = Math.floor(page / 2);
+					if (esPageUpper == 0) {
+					    esPageUpper = page - 1;
+					}
+					lastLoadTime = 0;
+					return loadPosts();
+				    } else {
+					esPageUpper = Math.floor(1.5 * esPageUpper);
+					if (esPageUpper > esMaxPage) esPageUpper = esMaxPage;
+				    }
 				}
 				for(var idx in result){
 				    post = result[idx];
@@ -483,8 +493,13 @@ function showBanner(msg, size){
     }, 1500);
 }
 
+function showImageStage(){
+    var stage = new ImageStage(postData);
+}
+
 var endlessSummer = false;
 var esMaxPage = 100000;
+var esPageUpper = esMaxPage;
 function toggleEndlessSummer(force){
     if (force) {
 	endlessSummer = true;
@@ -497,6 +512,7 @@ function toggleEndlessSummer(force){
 	$('.thinToolbar')[0].style.backgroundImage = "url(./img/toolbar-summer.png)";
 	showBanner('Endless summer: ON <img src="./img/orange-flower.png" style="vertical-align: -7px; height: 1em;" />', 15);
 	esMaxPage = 100000;
+	esPageUpper = esMaxPage;
 	if (postData.length > 0){
 	    postData = postData.slice(0, currentPostIdx+1);
 	    $('#totalPostNum').html(String(postData.length));
@@ -622,6 +638,9 @@ function setupTTT(){
 	case 104: // h
 	    showKeyBanner("h: toggle");
 	    highRes.checked = ! highRes.checked;
+	    break;
+	case 105: // i
+	    showImageStage();
 	    break;
 	case 106: // j
 	    showKeyBanner("j: next");

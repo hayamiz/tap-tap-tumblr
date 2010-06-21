@@ -468,6 +468,79 @@ ul.rounded li input[type="checkbox"]:after, ul.rounded li input[type="radio"]:af
     color: black;
 }
 
-#runBench {
-    
+
+div.image-stage {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+    background: black;
+    z-index: 200;
+}
+
+div.tiles {
+    margin: 0;
+    padding: 10px;
+    position: absolute;
+    z-index: 300;
+    -webkit-border-radius: 10px;
+    background: white;
+}
+div.tile-controls {
+    margin: 0;
+    padding: 10px;
+    position: absolute;
+    z-index: 300;
+    -webkit-border-radius: 10px;
+    background: white;
+}
+div.tiles {
+    margin: 0;
+    padding: 10px;
+    position: absolute;
+    z-index: 300;
+    -webkit-border-radius: 10px;
+    background: white;
+}
+
+div.tiles > div.tile {
+    display: block;
+    float: left;
+    width: 120px;
+    height: 120px;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    background: lightsteelblue;
+}
+
+div.tiles > div.tile > a {
+    display: block;
+    height: 120px;
+    width: 120px;
+    padding: 0;
+    margin: 0;
+}
+
+div.tiles > div.tile > a > span {
+    position: relative;
+    top: 10px;
+    left: 10px;
+    padding: 0;
+    margin: 0;
+    display: block;
+    height: 100px;
+    width: 100px;
+    overflow: hidden;
+}
+
+
+div.tiles > div.tile a:hover {
+    background: lightgray;
+}
+
+div.tiles > div.tile img {
+    vertical-align: middle;
+    width: 100px;
 }
