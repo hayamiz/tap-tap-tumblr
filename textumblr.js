@@ -75,10 +75,6 @@ function prefetchImages(idx){
 }
 
 var lastLoadTime = 0;
-var autoLoader = setInterval(function(){
-    prefetchPosts();
-    // prefetchImages(currentPostIdx+1);
-}, config.post_min_interval);
 
 function loadPosts(optparams){
     if (lastLoadTime + config.post_min_interval > (new Date()).getTime()){
@@ -723,4 +719,8 @@ function setupTTT(){
 }
 
 setupTTT();
+var autoLoader = setInterval(function(){
+    prefetchPosts();
+    // prefetchImages(currentPostIdx+1);
+}, config.post_min_interval);
 reposIndicators();

@@ -587,13 +587,18 @@ div.tile-controls > a.next {
     float: right;
 }
 
-div.tile-controls > a.prev > span {
+div.tile-controls > a > span {
     display: block;
+    width: 15px;
+    font-size: 15px;
+    margin: auto;
+}
+
+div.tile-controls > a.prev > span {
     -moz-transform: rotate(-90deg);
     -webkit-transform: rotate(-90deg);
 }
 div.tile-controls > a.next > span {
-    display: block;
     -moz-transform: rotate(90deg);
     -webkit-transform: rotate(90deg);
 }

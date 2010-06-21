@@ -72,9 +72,11 @@ var ImageStage = function(postdata, curidx){
 
     stageElem.style.Left = 0;
     stageElem.style.top = 0;
-    tilesElem.style.top = "20px";
+    stageElem.style.width = "100%";
+    stageElem.style.height = document.body.offsetHeight + "px";
+    tilesElem.style.top = (ymargin + window.pageYOffset) + "px";
     tilesElem.style.left = ((window.innerWidth - tilesElem.offsetWidth) / 2) + "px";
-    tileControlElem.style.top = (20 + tilesElem.offsetHeight)+"px";
+    tileControlElem.style.top = (ymargin + window.pageYOffset + tilesElem.offsetHeight)+"px";
     tileControlElem.style.left = tilesElem.style.left;
 
     this.closed = false;
