@@ -33,8 +33,7 @@ var postContent = null;
 var postInfo = null;
 var bannerMode = null;
 
-var imgPrefetchedIdx = 0;
-var imgPrefetchLastIdx = 0;
+var imgPrefetchWindow = {start: 0, end: 0};
 var imgPrefetchRingBufferIdx = 0;
 var imgPrefetchRingBuffer = new Array(config.prefetch_img_num);
 function putPrefetchRingBuffer(url){
@@ -45,33 +44,40 @@ function putPrefetchRingBuffer(url){
     imgPrefetchRingBufferIdx = imgPrefetchRingBufferIdx % config.prefetch_img_num;
 }
 function prefetchImages(idx){
-    if (idx < imgPrefetchLastIdx) {
-	for(var i = idx + 1;i < postData.length && i < imgPrefetchLastIdx;i++) {
-	    if (postData[i].type == "photo"){
-		if (highRes.checked) {
-		    putPrefetchRingBuffer(postData[i].photo_url_large);
-		} else {
-		    putPrefetchRingBuffer(postData[i].photo_url);
-		}
-	    }
-	}
-    } else if (idx >= imgPrefetchLastIdx){
-	if (idx + config.prefetch_img_num >= imgPrefetchedIdx){
-	    for(var i = idx + 1;
-		i < postData.length && i < idx + config.prefetch_img_num;
-		i++){
-		if (postData[i].type == "photo"){
-		    if (highRes.checked) {
-			putPrefetchRingBuffer(postData[i].photo_url_large);
-		    } else {
-			putPrefetchRingBuffer(postData[i].photo_url);
-		    }
-		}
-		imgPrefetchedIdx = i;
+    var pw = imgPrefetchWindow;
+    var pstart;
+    var pend;
+    var c;
+    if (pw.end <= idx){
+	pstart = idx;
+	pend = pstart + config.prefetch_img_num;
+	// c = "case1";
+    } else if (pw.start < idx) {
+	pstart = pw.end;
+	pend = idx + config.prefetch_img_num;
+	// c = "case2";
+    } else {
+	pstart = idx;
+	pend = pw.start;
+	// c = "case3";
+    }
+    var plen = postData.length;
+    pw.start = idx;
+    pw.end = idx + config.prefetch_img_num;
+    pw.end = (pw.end >= plen ? plen - 1 : pw.end);
+    pend = (pend >= plen ? plen - 1 : pend);
+    pstart = (pstart >= plen ? plen - 1 : pstart);
+    // dprint(c+" pstart="+pstart+", pend="+pend );
+    
+    for(var i = pstart;i <= pend;i++){
+	if (postData[i].type == "photo"){
+	    if (highRes.checked) {
+		putPrefetchRingBuffer(postData[i].photo_url_large);
+	    } else {
+		putPrefetchRingBuffer(postData[i].photo_url);
 	    }
 	}
     }
-    imgPrefetchLastIdx = idx;
 }
 
 var lastLoadTime = 0;
