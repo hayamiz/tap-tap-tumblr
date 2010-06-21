@@ -493,8 +493,15 @@ function showBanner(msg, size){
     }, 1500);
 }
 
-function showImageStage(){
-    var stage = new ImageStage(postData);
+var stage = null;
+function toggleImageStage(){
+    if (stage){
+	stage.close();
+	stage = null;
+    } else {
+	if (postData.length > 0)
+	    stage = new ImageStage(postData);
+    }
 }
 
 var endlessSummer = false;
@@ -580,7 +587,7 @@ function setupTTT(){
     $('#refreshButton').click(refreshAction);
     $('#runBench').click(launchBench);
     $('#flowerIcon > img').click(function(){toggleEndlessSummer();});
-    $('#stagingButton > img').click(function(){ showImageStage(); });
+    $('#stagingButton > img').click(function(){ toggleImageStage(); });
 
     if (navigator.userAgent.match("iPhone")){
 	$('div.side-help')[0].style.display = "none";
@@ -641,7 +648,7 @@ function setupTTT(){
 	    highRes.checked = ! highRes.checked;
 	    break;
 	case 105: // i
-	    showImageStage();
+	    toggleImageStage();
 	    break;
 	case 106: // j
 	    showKeyBanner("j: next");

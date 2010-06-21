@@ -499,17 +499,6 @@ div.tiles {
     -webkit-border-radius: 10px;
     background: white;
 }
-div.tile-controls {
-    margin: 0;
-    padding: 10px;
-    position: absolute;
-    z-index: 300;
-    -webkit-border-radius: 10px;
-    background: white;
-    line-height: 20px;
-    font-size: 18px;
-    text-align: center;
-}
 div.tiles {
     margin: 0;
     padding: 10px;
@@ -522,8 +511,8 @@ div.tiles {
 div.tiles > div.tile {
     display: block;
     float: left;
-    width: 120px;
-    height: 120px;
+    width: 60px;
+    height: 60px;
     text-align: center;
     padding: 0;
     margin: 0;
@@ -533,21 +522,21 @@ div.tiles > div.tile {
 
 div.tiles > div.tile > a {
     display: block;
-    height: 120px;
-    width: 120px;
+    height: 60px;
+    width: 60px;
     padding: 0;
     margin: 0;
 }
 
 div.tiles > div.tile > a > span {
     position: relative;
-    top: 10px;
-    left: 10px;
+    top: 5px;
+    left: 5px;
     padding: 0;
     margin: 0;
     display: block;
-    height: 100px;
-    width: 100px;
+    height: 50px;
+    width: 50px;
     overflow: hidden;
 }
 
@@ -558,5 +547,53 @@ div.tiles > div.tile a:hover {
 
 div.tiles > div.tile img {
     vertical-align: middle;
-    width: 100px;
+    width: 50px;
+}
+
+div.tile-controls {
+    margin: 0;
+    padding: 5px 5px;
+    position: absolute;
+    z-index: 300;
+    -webkit-border-radius: 10px;
+    background: white;
+    height: 30px;
+    font-size: 18px;
+    text-align: center;
+}
+
+div.tile-controls > a {
+    text-align: center;
+    display: block;
+    -webkit-border-radius: 10px;
+    height: 30px;
+    line-height: 30px;
+    width: 40%;
+    background: lightgray;
+    color: white;
+}
+
+div.tile-controls > a:hover {
+    background: white;
+    color: lightgray;
+    height: 28px;
+    border: lightgray solid 1px;
+}
+
+div.tile-controls > a.prev {
+    float: left;
+}
+div.tile-controls > a.next {
+    float: right;
+}
+
+div.tile-controls > a.prev > span {
+    display: block;
+    -moz-transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+}
+div.tile-controls > a.next > span {
+    display: block;
+    -moz-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
 }
